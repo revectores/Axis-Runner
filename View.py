@@ -2,10 +2,10 @@ from GlobalData import *
 import pygame
 
 class View:
-    def draw(self,arg):
+    def draw(self,arg): #初始状态绘制
         pass
 
-    def update(self,type,val):
+    def update(self,type,val): #实时更新
         pass
        
 class TextView(View):
@@ -15,9 +15,9 @@ class TextView(View):
     def draw(self,arg):
         GlobalData.screen.fill(self.bgColor)
         GlobalData.screen.blit(pygame.font.Font(None,60).render(str(arg),True,self.fontColor),(100,100))
-        pygame.display.update()
+        pygame.display.update() #写什么都别忘了update，要不然屏幕不会更新
 
     def update(self,type,val):
         GlobalData.screen.fill(self.bgColor)
-        GlobalData.screen.blit(pygame.font.Font(None,60).render(str(val),True,self.fontColor),(100,100))
+        GlobalData.screen.blit(pygame.font.Font(None,60).render(str(val),True,self.fontColor),(100,100)) #其实没有必要重绘整个画面，如果速度太慢可以优化。
         pygame.display.update()
