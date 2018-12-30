@@ -43,3 +43,28 @@ class TimerStatus(Status):
     
     def init(self):
         self.view.draw(0)
+
+
+class PersonStatus(Status):
+    def handle(self,event):
+        super().handle(event)
+        if event.type == KEYDOWN:
+            self.model.changeMode()
+
+    def timeElapse(self):
+        if self.model.mode == 'jump':
+            self.model.jumpUpdate()
+
+    def init(self):
+        self.view.draw()
+
+
+class AxisStatus(Status):
+    def handle(self,event):
+        super().handle(event)
+
+    def timeElapse(self):
+        pass
+
+    def init(self):
+        pass

@@ -21,3 +21,23 @@ class TextView(View):
         GlobalData.screen.fill(self.bgColor)
         GlobalData.screen.blit(pygame.font.Font(None,60).render(str(val),True,self.fontColor),(100,100)) #其实没有必要重绘整个画面，如果速度太慢可以优化。
         pygame.display.update()
+
+class PersonView(View):
+    def __init__(self):
+        pass
+
+    def draw(self):
+        pygame.display.update()
+
+    def update(self):
+        pygame.display.update()
+
+class AxisView(View):
+    def __init__(self):
+        pass
+
+    def draw(self):
+        pygame.display.update()
+
+    def update(self):
+        pygame.display.update()

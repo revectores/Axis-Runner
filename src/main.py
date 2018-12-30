@@ -18,6 +18,10 @@ def main():
     #初始化status，然后进入初状态
     view1,view2 = TextView(),TextView((0,200,0))
     model1,model2 = CounterModel(view1,114514),TimerModel(view2)
+    personView = PersonView()
+    axisView = AxisView()
+    personModel = PersonModel(personView,0,0,0,0)
+    axisModel = AxisModel(axisView)
     GlobalData.statusList = [CounterStatus(model1,view1),TimerStatus(model2,view2)]
     GlobalData.changeStatus(0)
     #进入消息循环
