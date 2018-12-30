@@ -9,7 +9,7 @@ class Model:
 class CounterModel(Model):
     def __init__(self,listener,count):
         super().__init__(listener)
-        self.count = count 
+        self.count = count
     
     def changeData(self,type,arg): #数据改变的时候就调用这个函数，type表示数据改变的类型（字符串），arg是这次数据改变所需的参数
         if type == 'add':
