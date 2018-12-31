@@ -14,6 +14,10 @@ class Status: #Status表示一个游戏场景，本质就是MVC设计模式中�
     
     def init(self): #游戏状态初始化
         pass
+    
+    @staticmethod
+    def build(): #工厂方法
+        pass
 
     def __init__(self,model,view):
         self.model = model
@@ -47,10 +51,17 @@ class TimerStatus(Status):
 
 class PersonStatus(Status):
     def handle(self,event):
-        super().handle(event)
+        if self.model.mode == 'jump':
+            return
         if event.type == KEYDOWN:
-            self.model.changeMode()
-
+            if event.key == K_UP:
+                self.model.mode('jump')
+            elif event.key == K_DOWN:
+                self.model.mode('down')               
+        elif event.type == KEYUP:
+            if event.key == K_DOWN:
+                self.model.mode('walk')
+        
     def timeElapse(self):
         if self.model.mode == 'jump':
             self.model.jumpUpdate()
@@ -61,7 +72,7 @@ class PersonStatus(Status):
 
 class AxisStatus(Status):
     def handle(self,event):
-        super().handle(event)
+        pass
 
     def timeElapse(self):
         pass
@@ -71,7 +82,7 @@ class AxisStatus(Status):
 
 class FunctionStatus(Status):
     def handle(self,event):
-        super().handle(event)
+        pass
     
     def timeElapse(self):
         #通知model
@@ -86,6 +97,7 @@ class EnvironmentStatus(Status):
     
     def timeElapse(self):
         #更新当前时间 从而更新得分self.model.changeData()
+        pass
     
     def init(self):
         self.view.draw()
@@ -95,17 +107,14 @@ class ComposedStatus(Status):
         self.elements = elements
 
     def handle(self,event):
-        for s in elements:
+        super().handle(event)
+        for s in self.elements:
             s.handle(event)
     
     def timeElapse(self):
-        for s in elements:
+        for s in self.elements:
             s.timeElapse()
     
     def init(self):
-        for s in elements:
+        for s in self.elements:
             s.init()
-
-class MainGameStatus(ComposedStatus):
-    def handle(self,event):
-

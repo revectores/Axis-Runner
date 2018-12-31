@@ -28,6 +28,7 @@ def main():
     while 1:
         clock.tick(60) #这个数字要<=60
         #得到当前状态，通知这个状态时间的流逝，然后处理事件
+        GlobalData.update()
         status = GlobalData.getStatus()
         status.timeElapse()
         for event in pygame.event.get():
