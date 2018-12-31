@@ -3,6 +3,7 @@ class GlobalData:
     currentStatus = 0
     clock = None
     screen = None
+    speed = 10
 
     @staticmethod
     def getStatus(): #获得当前状态

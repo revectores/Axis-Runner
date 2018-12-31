@@ -68,3 +68,44 @@ class AxisStatus(Status):
 
     def init(self):
         pass
+
+class FunctionStatus(Status):
+    def handle(self,event):
+        super().handle(event)
+    
+    def timeElapse(self):
+        #通知model
+        pass
+
+    def init(self):
+        pass
+
+class EnvironmentStatus(Status):
+    def handle(self,event):
+        super.handle(event)
+    
+    def timeElapse(self):
+        #更新当前时间 从而更新得分self.model.changeData()
+    
+    def init(self):
+        self.view.draw()
+
+class ComposedStatus(Status):
+    def __init__(self,elements):
+        self.elements = elements
+
+    def handle(self,event):
+        for s in elements:
+            s.handle(event)
+    
+    def timeElapse(self):
+        for s in elements:
+            s.timeElapse()
+    
+    def init(self):
+        for s in elements:
+            s.init()
+
+class MainGameStatus(ComposedStatus):
+    def handle(self,event):
+
