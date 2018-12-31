@@ -48,27 +48,27 @@ class TimerStatus(Status):
     def init(self):
         self.view.draw(0)
 
-
 class PersonStatus(Status):
     def handle(self,event):
-        if self.model.mode == 'jump':
+        if self.model.mode == 'jump': #跳跃过程中一切操作无用
             return
         if event.type == KEYDOWN:
-            if event.key == K_UP:
+            if event.key == K_w: #按w挑起
                 self.model.mode('jump')
-            elif event.key == K_DOWN:
+            elif event.key == K_s: #按s持续下蹲
                 self.model.mode('down')               
         elif event.type == KEYUP:
-            if event.key == K_DOWN:
+            if event.key == K_s: #松开s站起
                 self.model.mode('walk')
         
     def timeElapse(self):
         if self.model.mode == 'jump':
             self.model.jumpUpdate()
+        else:
+            self.model.maintain()
 
     def init(self):
         self.view.draw()
-
 
 class AxisStatus(Status):
     def handle(self,event):
