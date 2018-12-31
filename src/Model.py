@@ -1,3 +1,5 @@
+from Function import *
+
 #Model表示一个游戏场景所需的局部数据，Model和View的关系是一种基于观察者模式的关系，View对Model进行监听，实时变化
 class Model:
     def changeData(self,type,val):
@@ -70,6 +72,16 @@ class PersonModel(Model):
 class AxisModel(Model):
     def __init__(self,listener):
         super().__init__(listener)
+        self.position = 0
+        self.functionList = []
+        self.v_x = 0
+
+    def move(self):
+        self.position += self.v_x
+
+    @staticmethod
+    def functionGenerator(self):
+        fun = Function()
 
 
 # class EnvironmentModel(Model):
