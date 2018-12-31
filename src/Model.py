@@ -81,10 +81,25 @@ class AxisModel(Model):
 
     @staticmethod
     def functionGenerator(self):
-        fun = Function()
-
+        funcModel = FuncModel()
+        newFun = funcModel.linear(1,1)
+        fun = Function(newFun, range(-10,10))
+        return fun
 
 # class EnvironmentModel(Model):
 #     def __init__(self,listener):
 #         super().__init__(listener)
 
+
+class UnitTest:
+    def AxisModelTest(self):
+        funcModel = FuncModel()
+        newFun = funcModel.exp(2.5)
+        fun = Function(newFun, range(-10,10))
+        return fun
+
+
+if __name__ == '__main__':
+    unitest = UnitTest()
+    fun = unitest.AxisModelTest()
+    [print(point) for point in fun.points]

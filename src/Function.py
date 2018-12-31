@@ -17,7 +17,7 @@ class FuncModel:
     def power(self,exp):
         return lambda x: x**exp
 
-    def tri(self,name,A,k,phi):
+    def sin(self,A,k,phi):
         return lambda x: A*sin(k*x+phi)
 
     def arctri(self):
@@ -29,13 +29,16 @@ class Point:
         self.x = x
         self.y = y
 
+    def __str__(self):
+        return "(%f,%f)"%(self.x, self.y)
+
 
 class UnitTest:
     def funcModelTest(self):
         fm = FuncModel()
-        tf = fm.tri('sin',1,1,0)
+        tf = fm.sin(1,1,0)
         print(tf(pi/2))
 
-
-unitest = UnitTest()
-unitest.funcModelTest()
+if __name__ == '__main__':
+    unitest = UnitTest()
+    unitest.funcModelTest()
