@@ -23,6 +23,11 @@ class FuncModel:
     def arctri(self):
         pass
 
+    def newFunction(self):
+        funcModel = FuncModel()
+        newFun = self.linear(1,1)
+        fun = Function(newFun, range(-10,10))
+        return fun
 
 class Point:
     def __init__(self,x,y):
