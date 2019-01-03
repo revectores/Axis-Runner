@@ -75,46 +75,33 @@ class AxisStatus(Status):
         pass
 
     def timeElapse(self):
-        pass
+        self.model.functionUpdate()
 
     def init(self):
         pass
-
-class FunctionStatus(Status):
-    def handle(self,event):
-        pass
-    
-    def timeElapse(self):
-        #通知model
-        pass
-
-    def init(self):
-        pass
-
-class EnvironmentStatus(Status):
-    def handle(self,event):
-        super.handle(event)
-    
-    def timeElapse(self):
-        #更新当前时间 从而更新得分self.model.changeData()
-        pass
-    
-    def init(self):
-        self.view.draw()
 
 class ComposedStatus(Status):
-    def __init__(self,elements):
-        self.elements = elements
+    def __init__(self,subStatusList,model,view):
+        self.subStatusList,self.model,self.view = subStatusList,model,view
 
     def handle(self,event):
         super().handle(event)
-        for s in self.elements:
+        for s in self.subStatusList:
             s.handle(event)
     
     def timeElapse(self):
-        for s in self.elements:
+        for s in self.subStatusList:
             s.timeElapse()
     
     def init(self):
-        for s in self.elements:
+        for s in self.subStatusList:
             s.init()
+        self.model.init()
+
+class GameStatus(ComposedStatus):
+    def timeElapse(self):
+        super().timeElapse()
+        if self.model.collisionDetection():
+            GlobalData.changeStatus(GlobalData.StatusEnum.END_GAME)
+        
+    

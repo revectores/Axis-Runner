@@ -6,6 +6,10 @@ class GlobalData:
     speed = 10
     time = 0
 
+    class StatusEnum:
+        MAIN_GAME = 2
+        END_GAME = 3
+    
     @staticmethod
     def getStatus(): #获得当前状态
         return GlobalData.statusList[GlobalData.currentStatus]

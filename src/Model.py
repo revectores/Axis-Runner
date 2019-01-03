@@ -100,7 +100,6 @@ class PersonModel(Model):
     def maintain(self): #如果当前帧什么事件都没发生怎么办？
         self.listener.update('maintain', None) #view更新一下轮播贴图和人物坐标就行。
 
-
 class AxisModel(Model):
     def __init__(self, listener):
         super().__init__(listener)
@@ -126,7 +125,6 @@ class AxisModel(Model):
     def newFunction(self):
         FuncRandom.linear([-100, 100], [-50, 50])
 
-
 class GameModel(Model):
     HEIGHT = 0
     WIDTH = 0
@@ -142,7 +140,6 @@ class GameModel(Model):
         for function in self.axisModel.functionList:
             return len([point for point in function.points if
                  pm.left < point.x < pm.left + pm.width and pm.top - pm.height < point.y < pm.top]) == 0
-
 
 class UnitTest:
     pass
