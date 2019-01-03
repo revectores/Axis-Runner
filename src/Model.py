@@ -1,17 +1,15 @@
 from Function import *
 from FuncModel import *
+from FuncRandom import *
 from View import *
 
 #Model表示一个游戏场景所需的局部数据，Model和View的关系是一种基于观察者模式的关系，View对Model进行监听，实时变化
 class Model:
-    def changeData(self,type,val):
-        pass
-
-#    def notify(self):
-#        self.listener.
-    
     def __init__(self,listener):
         self.listener = listener #这里的listener就是一个View。因为目前并没有Model与多个View相关联的情况，将来如果有可以把listener换成listenerList，简单修改代码即可。
+
+    def changeData(self,type,val):
+        pass
 
 class CounterModel(Model):
     def __init__(self,listener,count):
@@ -36,12 +34,12 @@ class TimerModel(Model):
         self.listener.update('', self.time)
 
 class PersonModel(Model):
-    STAND_HEIGHT = 233 #常量，人物站立的高度，随便改
-    DOWN_HEIGHT = 23 #常量，人物下蹲的高度，随便改
-    WIDTH = 50
+    STAND_HEIGHT = 233  # 人物站立的高度
+    DOWN_HEIGHT = 23    # 人物下蹲的高度
+    WIDTH = 50          # 人物宽度
 
-    STAND_TOP = GameModel.HEIGHT/2 - STAND_HEIGHT
-    DOWN_TOP = GameModel.HEIGHT/2 - DOWN_HEIGHT
+    STAND_TOP = GameModel.HEIGHT/2 - STAND_HEIGHT   # 正常站立的人物头部边界
+    DOWN_TOP = GameModel.HEIGHT/2 - DOWN_HEIGHT     # 下蹲的任务头部边界
     LEFT = GameModel.WIDTH/2 - WIDTH/2
 
     max_border = {'top': 0, 'button': 0, 'left': LEFT, 'right': LEFT + WIDTH}
@@ -100,13 +98,33 @@ class PersonModel(Model):
             self.mode = 'walk'
 
     def maintain(self): #如果当前帧什么事件都没发生怎么办？
-        self.listener.update('maintain',None) #view更新一下轮播贴图和人物坐标就行。
+        self.listener.update('maintain', None) #view更新一下轮播贴图和人物坐标就行。
+
 
 class AxisModel(Model):
-    def __init__(self,listener):
+    def __init__(self, listener):
         super().__init__(listener)
-        self.position = 0
         self.functionList = []
+
+    @staticmethod
+    def getPosition():
+        return GlobalData.speed * GlobalData.t
+
+    @staticmethod
+    def screen2real(str):
+        str.replace('x', '(x-%.3f)' % getPosition())
+
+    def functionUpdate(self):
+        for function in self.functionList:
+            function.definition = range(function.definition[0] + funciton.extend_v, function.definition[-1] + function.extend_v)
+            function_expression = "%s"
+            self.listener.update(function_expression, function.points)
+            if function.definition[0] > GameModel.WIDTH or function.definition[-1] < 0\
+                    or function.max > GameModel.HEIGHT or function.min < 0:
+                self.functionList.remove(function)
+
+    def newFunction(self):
+        FuncRandom.linear([-100, 100], [-50, 50])
 
 
 class GameModel(Model):
