@@ -41,24 +41,52 @@ class Function:
 
 
 class FuncModel:
-    @staticmethod
-    def linear(k, b):
-        return lambda x: k*x + b
+    eq = lambda x: x
 
     @staticmethod
-    def exp(base):
-        return lambda x: base**x
+    def linear(para, f=eq):
+        k, b = para
+        return lambda x: k * f(x) + b
 
     @staticmethod
-    def power(exp):
-        return lambda x: x**exp
+    def exp(para, f=eq):
+        base = para[0]
+        return lambda x: base ** f(x)
 
     @staticmethod
-    def sin(A, k, phi):
-        return lambda x: A*sin(k*x+phi)
+    def power(para, f=eq):
+        exp = para[0]
+        return lambda x: f(x) ** exp
 
     @staticmethod
-    def arctri():
+    def sin(para, f=eq):
+        k, phi = para
+        return lambda x: sin(k*f(x)+phi)
+
+    @staticmethod
+    def arcsin():
+        pass
+
+
+class FuncStrModel:
+    @staticmethod
+    def linear(k, b, str):
+        return "%d*%s+%d" % (k, str, b)
+
+    @staticmethod
+    def exp(base, str):
+        return "%d**%s" % (base, str)
+
+    @staticmethod
+    def power(exp, str):
+        return "%s**%d" % (str, exp)
+
+    @staticmethod
+    def sin(k, phi, str):
+        return "%d*sin(%d*str+%d)" % (k, str, phi)
+
+    @staticmethod
+    def arcsin():
         pass
 
 
@@ -79,8 +107,10 @@ class FuncRandom:
             extend_v = -extend_v
             definition = range(Function.SCREEN_WIDTH, Function.SCREEN_WIDTH + max_def)
 
-        formula = FuncModel.linear(k, b)
-        formula_string = "%d*x+%d" % (k, b)
+        exp1 = FuncModel.exp([2])
+        exp2 = FuncStrModel.exp(2, 'x')
+        formula = FuncModel.linear([k, b], exp1)
+        formula_string = FuncStrModel.linear(k, b, exp2)
         # direction = FuncRandom.direction()
         # y_0, y_w = formula(0), formula(GlobalData.WIDTH)
 
