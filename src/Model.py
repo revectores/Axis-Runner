@@ -1,7 +1,4 @@
 from Function import *
-from FuncModel import *
-from FuncRandom import *
-from View import *
 
 #Model表示一个游戏场景所需的局部数据，Model和View的关系是一种基于观察者模式的关系，View对Model进行监听，实时变化
 class Model:
@@ -33,14 +30,32 @@ class TimerModel(Model):
             self.time = 0
         self.listener.update('', self.time)
 
+
+class GameModel(Model):
+    SCREEN_HEIGHT = 0
+    SCREEN_WIDTH = 0
+    g = 9.8
+
+    def __init__(self,listener, personModel, axisModel):
+        super().__init__(listener)
+        self.personModel = personModel
+        self.axisModel = axisModel
+
+    def collsionDetection(self):
+        pm = self.personModel
+        for function in self.axisModel.functionList:
+            return len([point for point in function.points if
+                 pm.left < point.x < pm.left + pm.width and pm.top - pm.height < point.y < pm.top])
+
+
 class PersonModel(Model):
-    STAND_HEIGHT = 233  # 人物站立的高度
-    DOWN_HEIGHT = 23    # 人物下蹲的高度
+    STAND_HEIGHT = 100  # 人物站立的高度
+    DOWN_HEIGHT = 50    # 人物下蹲的高度
     WIDTH = 50          # 人物宽度
 
-    STAND_TOP = GameModel.HEIGHT/2 - STAND_HEIGHT   # 正常站立的人物头部边界
-    DOWN_TOP = GameModel.HEIGHT/2 - DOWN_HEIGHT     # 下蹲的任务头部边界
-    LEFT = GameModel.WIDTH/2 - WIDTH/2
+    STAND_TOP = GameModel.SCREEN_HEIGHT/2 - STAND_HEIGHT   # 正常站立的人物头部边界
+    DOWN_TOP = GameModel.SCREEN_HEIGHT/2 - DOWN_HEIGHT     # 下蹲的任务头部边界
+    LEFT = GameModel.SCREEN_WIDTH/2 - WIDTH/2
 
     max_border = {'top': 0, 'button': 0, 'left': LEFT, 'right': LEFT + WIDTH}
 
@@ -100,7 +115,10 @@ class PersonModel(Model):
     def maintain(self): #如果当前帧什么事件都没发生怎么办？
         self.listener.update('maintain', None) #view更新一下轮播贴图和人物坐标就行。
 
+
 class AxisModel(Model):
+    EXPRESSION = "%s, %d<x<%d"
+
     def __init__(self, listener):
         super().__init__(listener)
         self.functionList = []
@@ -110,40 +128,44 @@ class AxisModel(Model):
         return GlobalData.speed * GlobalData.t
 
     @staticmethod
-    def screen2real(str):
-        str.replace('x', '(x-%.3f)' % getPosition())
+    def rangeBias(origin, bias):
+        return range(origin[0] + bias, origin[-1] + bias)
+
+    @staticmethod
+    def realExp(function):
+        rangeBias(function.definition, getPosition())
+        form = function.formula_string.replace('x', '(x-%d)' % getPosition())
+        real_def = rangeBias(function.definition, getPosition())
+        return self.EXPRESSION % form, real_def[0], real_def[-1]
 
     def functionUpdate(self):
         for function in self.functionList:
-            function.definition = range(function.definition[0] + funciton.extend_v, function.definition[-1] + function.extend_v)
-            function_expression = "%s"
-            self.listener.update(function_expression, function.points)
-            if function.definition[0] > GameModel.WIDTH or function.definition[-1] < 0\
-                    or function.max > GameModel.HEIGHT or function.min < 0:
+            if function.expired_time > time():
                 self.functionList.remove(function)
+                continue
 
-    def newFunction(self):
-        FuncRandom.linear([-100, 100], [-50, 50])
+            fun_expression = realExp(function)
+            function.definition = rangeBias(function.definition, funciton.extend_v)
+            self.listener.update(fun_expression, function.points)
 
-class GameModel(Model):
-    HEIGHT = 0
-    WIDTH = 0
-    g = 9.8
+    def newLinear(self):
+        kr = [-100, 100]
+        br = [-PersonModel.STAND_HEIGHT//2, PersonModel.STAND_HEIGHT]  # 限制b的范围, 保证生成的直线对玩家存在威胁
+        new_linear = FuncRandom.linear(kr, br)
+        return new_linear
 
-    def __init__(self,listener, personModel, axisModel):
-        super().__init__(listener)
-        self.personModel = personModel
-        self.axisModel = axisModel
-
-    def collsionDetection(self):
-        pm = self.personModel
-        for function in self.axisModel.functionList:
-            return len([point for point in function.points if
-                 pm.left < point.x < pm.left + pm.width and pm.top - pm.height < point.y < pm.top]) == 0
 
 class UnitTest:
-    pass
+    def axisTest(self):
+        axisModel = AxisModel(1)
+        new_linear = axisModel.newLinear()
+        prn_obj(new_linear)
+        print([(point.x, point.y) for point in new_linear.points])
 
 
 if __name__ == '__main__':
-    pass
+    def prn_obj(obj):
+        print('\n'.join(['%s: %s' % item for item in obj.__dict__.items()]))
+
+    unitTest = UnitTest()
+    unitTest.axisTest()
