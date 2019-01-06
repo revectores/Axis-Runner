@@ -59,9 +59,8 @@ class FuncModel:
         return lambda x: f(x) ** exp
 
     @staticmethod
-    def sin(para, f=eq):
-        k, phi = para
-        return lambda x: sin(k*f(x)+phi)
+    def sin(f=eq):
+        return lambda x: sin(f(x))
 
     @staticmethod
     def arcsin():
@@ -70,20 +69,23 @@ class FuncModel:
 
 class FuncStrModel:
     @staticmethod
-    def linear(k, b, str):
+    def linear(para, str):
+        k, b = para
         return "%d*%s+%d" % (k, str, b)
 
     @staticmethod
-    def exp(base, str):
+    def exp(para, str):
+        base = para[0]
         return "%d**%s" % (base, str)
 
     @staticmethod
-    def power(exp, str):
+    def power(para, str):
+        exp = para[0]
         return "%s**%d" % (str, exp)
 
     @staticmethod
-    def sin(k, phi, str):
-        return "%d*sin(%d*str+%d)" % (k, str, phi)
+    def sin(para, str):
+        return "sin(%s)" % (str)
 
     @staticmethod
     def arcsin():
@@ -110,12 +112,20 @@ class FuncRandom:
         exp1 = FuncModel.exp([2])
         exp2 = FuncStrModel.exp(2, 'x')
         formula = FuncModel.linear([k, b], exp1)
-        formula_string = FuncStrModel.linear(k, b, exp2)
+        formula_string = FuncStrModel.linear([k, b], exp2)
         # direction = FuncRandom.direction()
         # y_0, y_w = formula(0), formula(GlobalData.WIDTH)
 
         new_function = Function(formula, definition, formula_string, max_def, extend_v, mov_v)
         return new_function
+
+    @staticmethod
+    def simpleRandom():
+        r = random()
+
+    @staticmethod
+    def random():
+        pass
 
 
 class Point:
@@ -132,10 +142,7 @@ class Point:
 
 class UnitTest:
     def funcModelTest(self):
-        fm = FuncModel()
-        tf = fm.sin(1,1,0)
-        print(tf(pi/2))
-
+        pass
 
 if __name__ == '__main__':
     unitest = UnitTest()

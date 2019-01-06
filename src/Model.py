@@ -57,7 +57,7 @@ class PersonModel(Model):
     DOWN_TOP = GameModel.SCREEN_HEIGHT/2 - DOWN_HEIGHT     # 下蹲的任务头部边界
     LEFT = GameModel.SCREEN_WIDTH/2 - WIDTH/2
 
-    max_border = {'top': 0, 'button': 0, 'left': LEFT, 'right': LEFT + WIDTH}
+    max_border = {'top': 0, 'bottom': 0, 'left': LEFT, 'right': LEFT + WIDTH}
 
     def __init__(self,listener, top, left, height, width):
         super().__init__(listener)
