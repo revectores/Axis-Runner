@@ -59,7 +59,7 @@ class PersonModel(Model):
     LEFT = GameModel.SCREEN_WIDTH/2 - WIDTH/2
 
     max_border = {'top': 0, 'bottom': 0, 'left': LEFT, 'right': LEFT + WIDTH}
-    attack_border = {'top': -100, 'bottom': 100, 'left': LEFT, 'right': LEFT + WIDTH}
+    attack_border = {'top': 150, 'bottom': -50, 'left': LEFT, 'right': LEFT + WIDTH}
 
     def __init__(self,listener, top = 0, left = 0, height = 0, width = 0):
         super().__init__(listener)
@@ -72,6 +72,16 @@ class PersonModel(Model):
         self._mode = 'walk'
         self.jumpStart = 0
         self.max_border['top'] = self.STAND_HEIGHT + self.v_x ** 2 / GameModel.g
+        self.attack_border['top'] = int(self.max_border['top'] * 1.5)
+        self.attack_border['bottom'] = -int(self.max_border['bottom'] * 0.5)
+
+    @staticmethod
+    def real2screen_x(x):
+        pass
+
+    @staticmethod
+    def real2screen_y(y):
+        pass
 
     def borderUpdate(self):
         self.listener.update('border', [self.top, self.left, self.height, self.width])
