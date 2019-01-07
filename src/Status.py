@@ -32,7 +32,6 @@ class PersonStatus(Status):
         if self.model.mode == 'jump': #跳跃过程中一切操作无用
             return
         if event.type == KEYDOWN:
-            print(self.model.mode)
             if event.key == K_w: #按w挑起
                 self.model.mode = 'jump'
             elif event.key == K_s: #按s持续下蹲
@@ -55,36 +54,6 @@ class PersonStatus(Status):
         view = PersonView()
         return PersonStatus(PersonModel(view),view)
 
-'''
-class AxisStatus(Status):
-    def handle(self,event):
-        pass
-
-    def timeElapse(self):
-        self.model.functionUpdate()
-
-    def init(self):
-        pass
-
-class ComposedStatus(Status):
-    def __init__(self,subStatusList,model,view):
-        self.subStatusList,self.model,self.view = subStatusList,model,view
-
-    def handle(self,event):
-        super().handle(event)
-        for s in self.subStatusList:
-            s.handle(event)
-    
-    def timeElapse(self):
-        for s in self.subStatusList:
-            s.timeElapse()
-    
-    def init(self):
-        for s in self.subStatusList:
-            s.init()
-        self.model.init()
-'''
-
 class GameStatus(Status):
     def __init__(self,personStatus,axisStatus,model,view):
         super().__init__(model,view)
@@ -94,6 +63,7 @@ class GameStatus(Status):
         self.view.update('',0)
         self.personStatus.timeElapse()
         self.axisStatus.timeElapse()
+        print(self.axisStatus.view.update)
         pygame.display.update()
         if self.model.collisionDetection():
             GlobalData.changeStatus(GlobalData.StatusEnum.END_GAME)

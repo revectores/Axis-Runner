@@ -10,29 +10,6 @@ class Model:
         pass
 
 
-class CounterModel(Model):
-    def __init__(self,listener,count):
-        super().__init__(listener)
-        self.count = count
-    
-    def changeData(self,type,arg): #数据改变的时候就调用这个函数，type表示数据改变的类型（字符串），arg是这次数据改变所需的参数
-        if type == 'add':
-            self.count += arg
-        self.listener.update('',self.count) #通知监听者
-
-class TimerModel(Model):
-    def __init__(self,listener):
-        super().__init__(listener)
-        self.time = 0
-     
-    def changeData(self,type,val): #能看懂上一个Model，看懂这个不难。
-        if type == 'inc':
-            self.time += val
-        elif type == 'zero':
-            self.time = 0
-        self.listener.update('', self.time)
-
-
 class GameModel(Model):
     SCREEN_HEIGHT = 480
     SCREEN_WIDTH = 640
@@ -69,7 +46,7 @@ class PersonModel(Model):
         self.height = self.STAND_HEIGHT
         self.width = self.WIDTH
         self.v_x = 10
-        self.v_y = 50
+        self.v_y = 35
         self._mode = 'walk'
         self.jumpStart = 0
         self.max_border['top'] = self.STAND_HEIGHT + self.v_x ** 2 / GameModel.g
@@ -98,8 +75,9 @@ class PersonModel(Model):
     def mode(self, nextMode):
         self._mode = nextMode
         if nextMode == 'jump':
+            self.height = self.STAND_HEIGHT
+            self.top = self.STAND_TOP
             self.jumpStart = GlobalData.time
-            pass
 
         if nextMode == 'down':
             self.jumpStart = 0
@@ -117,13 +95,17 @@ class PersonModel(Model):
 
     def getHeight(self):
         t = GlobalData.time - self.jumpStart
-        return self.v_y * t - 1/2 * GameModel.g * t ** 2
+        return self.v_y * t - 1/2 * GameModel.g / 2 * t * t
 
     def jumpUpdate(self):
-        self.height = self.getHeight()
-        self.borderUpdate()
-        if GlobalData.time - self.jumpStart >= 2 * self.v_y/GameModel.g:
+        h = self.getHeight()
+        if h<=0:
             self.mode = 'walk'
+            return
+        self.top -= h
+        self.borderUpdate()
+        self.top +=h
+        #if GlobalData.time - self.jumpStart >= 2 * self.v_y/GameModel.g:
 
     def maintain(self): #如果当前帧什么事件都没发生怎么办？
         self.listener.update('maintain', None) #view更新一下轮播贴图和人物坐标就行。
