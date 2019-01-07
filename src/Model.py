@@ -10,6 +10,29 @@ class Model:
         pass
 
 
+class CounterModel(Model):
+    def __init__(self,listener,count):
+        super().__init__(listener)
+        self.count = count
+    
+    def changeData(self,type,arg): #数据改变的时候就调用这个函数，type表示数据改变的类型（字符串），arg是这次数据改变所需的参数
+        if type == 'add':
+            self.count += arg
+        self.listener.update('',self.count) #通知监听者
+
+class TimerModel(Model):
+    def __init__(self,listener):
+        super().__init__(listener)
+        self.time = 0
+     
+    def changeData(self,type,val): #能看懂上一个Model，看懂这个不难。
+        if type == 'inc':
+            self.time += val
+        elif type == 'zero':
+            self.time = 0
+        self.listener.update('', self.time)
+
+
 class GameModel(Model):
     SCREEN_HEIGHT = 480
     SCREEN_WIDTH = 640
@@ -39,14 +62,14 @@ class PersonModel(Model):
     max_border = {'top': 0, 'bottom': 0, 'left': LEFT, 'right': LEFT + WIDTH}
     attack_border = {'top': 150, 'bottom': -50, 'left': LEFT, 'right': LEFT + WIDTH}
 
-    def __init__(self,listener, top = 0, left = 0, height = 0, width = 0):
+    def __init__(self, listener):
         super().__init__(listener)
         self.top = self.STAND_TOP
         self.left = self.LEFT
         self.height = self.STAND_HEIGHT
         self.width = self.WIDTH
         self.v_x = 10
-        self.v_y = 10
+        self.v_y = 50
         self._mode = 'walk'
         self.jumpStart = 0
         self.max_border['top'] = self.STAND_HEIGHT + self.v_x ** 2 / GameModel.g
@@ -59,10 +82,10 @@ class PersonModel(Model):
 
     @staticmethod
     def real2screen_y(y):
-        pass
+        return GameModel.SCREEN_HEIGHT - y
 
     def borderUpdate(self):
-        self.listener.update('border', [self.top, self.left, self.height, self.width])
+        self.listener.update('border', [self.left, self.top, self.width, self.height])
 
     def modeUpdate(self):
         self.listener.update('mode', self.mode)
@@ -75,6 +98,7 @@ class PersonModel(Model):
     def mode(self, nextMode):
         self._mode = nextMode
         if nextMode == 'jump':
+            self.jumpStart = GlobalData.time
             pass
 
         if nextMode == 'down':
@@ -96,7 +120,6 @@ class PersonModel(Model):
         return self.v_y * t - 1/2 * GameModel.g * t ** 2
 
     def jumpUpdate(self):
-        g = 9.8
         self.height = self.getHeight()
         self.borderUpdate()
         if GlobalData.time - self.jumpStart >= 2 * self.v_y/GameModel.g:
