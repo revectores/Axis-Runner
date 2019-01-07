@@ -1,24 +1,26 @@
-class GlobalData:
-    statusList = []
-    currentStatus = 0
-    clock = None
-    screen = None
-    speed = 10
-    time = 0
+statusList = []
+currentStatus = 0
+clock = None
+screen = None
+speed = 10
+time = 0
+statusDict = {}
 
-    class StatusEnum:
-        MAIN_GAME = 2
-        END_GAME = 3
+def getStatus(): #获得当前状态
+    return statusList[currentStatus]
     
-    @staticmethod
-    def getStatus(): #获得当前状态
-        return GlobalData.statusList[GlobalData.currentStatus]
-    
-    @staticmethod
-    def changeStatus(nextStatus): #更改状态，然后让该游戏状态初始化
-        GlobalData.currentStatus = nextStatus
-        GlobalData.getStatus().init()
+def changeStatus(nextStatus): #更改状态，然后让该游戏状态初始化
+    global currentStatus
+    currentStatus = nextStatus
+    getStatus().init()
 
-    @staticmethod
-    def update():
-        GlobalData.time += 1
+def update():
+    global time
+    time += 1
+
+def init(classList,aStatusDict,firstStatus):
+    for c in classList:
+        statusList.append(c.build())
+    global statusDict
+    statusDict = aStatusDict
+    changeStatus(firstStatus)

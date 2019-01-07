@@ -1,89 +1,46 @@
-from GlobalData import *
+import GlobalData
 import pygame
-
 
 class View:
     def draw(self, arg):  # 初始状态绘制
         pass
-
-    def update(self, type, val):  # 实时更新
+    
+    def update(self,type,val):
         pass
 
 
-class TextView(View):
-    def __init__(self, bgColor=(0, 0, 200), fontColor=(255, 255, 255)):
-        self.bgColor, self.fontColor = bgColor, fontColor
-
-    def draw(self, arg):
-
+class GameView(View):
+    def __init__(self,bgColor,font,fontColor,pos):
+        self.bgColor,self.font,self.fontColor,self.pos = bgColor,font,fontColor,pos
+    
+    def draw(self,arg):
         GlobalData.screen.fill(self.bgColor)
-        GlobalData.screen.blit(pygame.font.Font(None, 60).render(str(arg), True, self.fontColor), (100, 100))
-        pygame.display.update()  # 写什么都别忘了update，要不然屏幕不会更新
-
-    def update(self, type, val):
-        time = GlobalData.
-        speed = GlobalData.
-        arg = time*speed
-        draw(arg)
-        GlobalData.screen.fill(self.bgColor)
-        GlobalData.screen.blit(pygame.font.Font(None, 60).render(str(val), True, self.fontColor),
-                               (100, 100))  # 其实没有必要重绘整个画面，如果速度太慢可以优化。
+        GlobalData.screen.blit(self.font.render('得分：0',True,self.fontColor),self.pos)
         pygame.display.update()
+    
+    def update(self,type,val):
+        GlobalData.screen.fill(self.bgColor)
+        GlobalData.screen.blit(self.font.render('得分：%d' % (GlobalData.time),True,self.fontColor),self.pos)
 
 
 class PersonView(View):
-    def __init__(self):
-        self.image = ['walk.png', 'jump.png', 'down.png']
-        self.size =
-        self.position =
-        self.screen =
-        self.presta = 0
-        self.preval = 0
+    def draw(self,arg):
+        self.border = arg
+        self.mode = 'walk'
+        pygame.draw.rect(GlobalData.screen,[100,100,100],arg)
 
-    def draw(self, sta=0, position):
-        runner = pygame.image.load(self.image[sta])
-        GlobalData.screen.blit(runner,position)
-        pygame.display.update()
+    def update(self,type,val):
+        if type == 'border':
+            self.border = val
+            pygame.draw.rect(GlobalData.screen,[100,100,100],val)
+            GlobalData.screen.blit(pygame.font.SysFont('SimHei',60).render(self.mode,True,[100,100,100]),(200,200))
+        elif type == 'maintain':
+            pygame.draw.rect(GlobalData.screen,[100,100,100],self.border)
+            GlobalData.screen.blit(pygame.font.SysFont('SimHei',60).render(self.mode,True,[100,100,100]),(200,200))
+        elif type == 'mode':
+            self.mode = val
+            pygame.draw.rect(GlobalData.screen,[100,100,100],self.border)
+            GlobalData.screen.blit(pygame.font.SysFont('SimHei',60).render(val,True,[100,100,100]),(200,200))
 
-    def update(self, Type, val):
-
-        if Type == 'mode':
-            if val == 'walk':
-                sta = 0
-            elif val == 'jump':
-                Type = 'height'
-                sta = 1
-            elif val = 'down':
-                sta = 2
-        elif Type == 'height':
-            sta = 1;
-            self.position =
-        elif Type == 'maintain':
-            update(self,self.presta,self.preval)
-        elif Type == 'jstop':
-            sta = 0
-            draw(sta, self.position)
-        self.presta = Type;self.preval = val
-
-
-
-class AxisView(View):
-    def __init__(self):
-
-    def draw(self, pos):
-        pygame.screen.set_at(pos, color)
-        pygame.display.update()
-
-    def update(self):
-        from collections import Iterator
-        from collections import Iterable
-        L = function()
-        Iter = L.__iter__()
-        while True:
-            try:
-                draw(next(L))
-            except:
-                break
-        pygame.display.update()
-
-person = personview(status,,value)
+    def __init__(self,border = 0,mode = 0):
+        self.border,self.mode = border,mode

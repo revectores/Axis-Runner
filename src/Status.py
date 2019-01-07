@@ -1,7 +1,10 @@
 import pygame
 from pygame.locals import *
-from GlobalData import *
+from View import *
+from Model import *
+import GlobalData
 import sys
+
 
 class Status: #Status表示一个游戏场景，本质就是MVC设计模式中的Controller
     def timeElapse(self): #当时间流逝时，当前状态可能会发生变化
@@ -23,43 +26,20 @@ class Status: #Status表示一个游戏场景，本质就是MVC设计模式中�
         self.model = model
         self.view = view
 
-class CounterStatus(Status):
-    def handle(self,event):
-        super().handle(event)
-        if event.type == KEYDOWN:
-            self.model.changeData('add',1)
-        elif event.type == MOUSEBUTTONDOWN:
-            GlobalData.changeStatus(1) #更改状态
-
-    def init(self):
-        self.view.draw(self.model.count) #初始化时通知view完成最初的绘制
-
-class TimerStatus(Status):
-    def handle(self,event):
-        super().handle(event)
-        if event.type == KEYDOWN:
-            self.model.changeData('zero',23333)
-        elif event.type == MOUSEBUTTONDOWN:
-            GlobalData.changeStatus(0)
-    
-    def timeElapse(self): #时间流逝时计时器数字变化
-        self.model.changeData('inc',1)
-    
-    def init(self):
-        self.view.draw(0)
 
 class PersonStatus(Status):
     def handle(self,event):
         if self.model.mode == 'jump': #跳跃过程中一切操作无用
             return
         if event.type == KEYDOWN:
+            print(self.model.mode)
             if event.key == K_w: #按w挑起
-                self.model.mode('jump')
+                self.model.mode = 'jump'
             elif event.key == K_s: #按s持续下蹲
-                self.model.mode('down')               
+                self.model.mode = 'down'              
         elif event.type == KEYUP:
             if event.key == K_s: #松开s站起
-                self.model.mode('walk')
+                self.model.mode = 'walk'
         
     def timeElapse(self):
         if self.model.mode == 'jump':
@@ -68,8 +48,14 @@ class PersonStatus(Status):
             self.model.maintain()
 
     def init(self):
-        self.view.draw()
+        self.view.draw([200,200,100,100])
+    
+    @staticmethod
+    def build():
+        view = PersonView()
+        return PersonStatus(PersonModel(view),view)
 
+'''
 class AxisStatus(Status):
     def handle(self,event):
         pass
@@ -97,11 +83,28 @@ class ComposedStatus(Status):
         for s in self.subStatusList:
             s.init()
         self.model.init()
+'''
 
-class GameStatus(ComposedStatus):
+class GameStatus(Status):
+    def __init__(self,personStatus,model,view):
+        super().__init__(model,view)
+        self.personStatus = personStatus
+     
     def timeElapse(self):
-        super().timeElapse()
-        if self.model.collisionDetection():
-            GlobalData.changeStatus(GlobalData.StatusEnum.END_GAME)
-        
+        self.view.update('',0)
+        self.personStatus.timeElapse()
+        pygame.display.update()
+        #if self.model.collisionDetection():
+         #   GlobalData.changeStatus(GlobalData.StatusEnum.END_GAME)
     
+    def init(self):
+        self.view.draw((200,200))
+        self.personStatus.init()
+    
+    def handle(self,event):
+        super().handle(event)
+        self.personStatus.handle(event)
+    
+    @staticmethod
+    def build():
+        return GameStatus(PersonStatus.build(),None,GameView((196,191,169),pygame.font.SysFont('SimHei', 60),(0,0,0),(20,20)))

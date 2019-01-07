@@ -1,4 +1,5 @@
 from Function import *
+import GlobalData
 
 #Model表示一个游戏场景所需的局部数据，Model和View的关系是一种基于观察者模式的关系，View对Model进行监听，实时变化
 class Model:
@@ -7,7 +8,7 @@ class Model:
 
     def changeData(self,type,val):
         pass
-
+'''
 class CounterModel(Model):
     def __init__(self,listener,count):
         super().__init__(listener)
@@ -29,11 +30,11 @@ class TimerModel(Model):
         elif type == 'zero':
             self.time = 0
         self.listener.update('', self.time)
-
+'''
 
 class GameModel(Model):
-    SCREEN_HEIGHT = 0
-    SCREEN_WIDTH = 0
+    SCREEN_HEIGHT = 480
+    SCREEN_WIDTH = 640
     g = 9.8
 
     def __init__(self,listener, personModel, axisModel):
@@ -57,9 +58,9 @@ class PersonModel(Model):
     DOWN_TOP = GameModel.SCREEN_HEIGHT/2 - DOWN_HEIGHT     # 下蹲的任务头部边界
     LEFT = GameModel.SCREEN_WIDTH/2 - WIDTH/2
 
-    max_border = {'top': 0, 'bottom': 0, 'left': LEFT, 'right': LEFT + WIDTH}
+    max_border = {'top':0, 'bottom': 0, 'left': LEFT, 'right': LEFT + WIDTH}
 
-    def __init__(self,listener, top, left, height, width):
+    def __init__(self,listener, top = 0, left = 0, height = 0, width = 0):
         super().__init__(listener)
         self.top = self.STAND_TOP
         self.left = self.LEFT
@@ -69,7 +70,7 @@ class PersonModel(Model):
         self.v_y = 10
         self._mode = 'walk'
         self.jumpStart = 0
-        self.max_border['top'] = self.STAND_HEIGHT + self.v_x**2/GameModel.g
+        self.max_border['top'] = self.STAND_HEIGHT + self.v_x ** 2 / GameModel.g
 
     def borderUpdate(self):
         self.listener.update('border', [self.top, self.left, self.height, self.width])
@@ -102,20 +103,20 @@ class PersonModel(Model):
         #关于轮播图片实现动画的问题这个让view自己管理一个图片列表和索引就好，因为每一帧都会有update请求送过去，每update一次view换图这样就可以。人物脚下的坐标也是同样方法实现。
 
     def getHeight(self):
-        t = GlobalData.t - self.jumpStart
-        return self.v_y * t - 1/2 * GameModel.g * t**2
+        t = GlobalData.time - self.jumpStart
+        return self.v_y * t - 1/2 * GameModel.g * t ** 2
 
     def jumpUpdate(self):
         g = 9.8
         self.height = self.getHeight()
         self.borderUpdate()
-        if GlobalData.t - self.jumpStart >= 2*self.v_y/GameModel.g:
+        if GlobalData.time - self.jumpStart >= 2 * self.v_y/GameModel.g:
             self.mode = 'walk'
 
     def maintain(self): #如果当前帧什么事件都没发生怎么办？
         self.listener.update('maintain', None) #view更新一下轮播贴图和人物坐标就行。
 
-
+'''
 class AxisModel(Model):
     EXPRESSION = "%s, %d<x<%d"
 
@@ -169,3 +170,4 @@ if __name__ == '__main__':
 
     unitTest = UnitTest()
     unitTest.axisTest()
+'''
