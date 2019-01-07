@@ -86,25 +86,38 @@ class ComposedStatus(Status):
 '''
 
 class GameStatus(Status):
-    def __init__(self,personStatus,model,view):
+    def __init__(self,personStatus,axisStatus,model,view):
         super().__init__(model,view)
-        self.personStatus = personStatus
+        self.personStatus,self.axisStatus = personStatus,axisStatus
      
     def timeElapse(self):
         self.view.update('',0)
         self.personStatus.timeElapse()
+        self.axisStatus.timeElapse()
         pygame.display.update()
-        #if self.model.collisionDetection():
-         #   GlobalData.changeStatus(GlobalData.StatusEnum.END_GAME)
+        if self.model.collisionDetection():
+            GlobalData.changeStatus(GlobalData.StatusEnum.END_GAME)
     
     def init(self):
         self.view.draw((200,200))
         self.personStatus.init()
-    
+
     def handle(self,event):
         super().handle(event)
         self.personStatus.handle(event)
     
     @staticmethod
     def build():
-        return GameStatus(PersonStatus.build(),None,GameView((196,191,169),pygame.font.SysFont('SimHei', 60),(0,0,0),(20,20)))
+        pst = PersonStatus.build()
+        ast = AxisStatus.build()
+        return GameStatus(pst,ast,GameModel(None,pst.model,ast.model),GameView((196,191,169),pygame.font.SysFont('SimHei', 60),(0,0,0),(20,20)))
+
+class AxisStatus(Status):
+    def timeElapse(self):
+        self.model.functionUpdate()
+    
+    @staticmethod
+    def build():
+        view = AxisView()
+        return AxisStatus(AxisModel(view),view)
+    

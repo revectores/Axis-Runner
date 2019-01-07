@@ -8,29 +8,7 @@ class Model:
 
     def changeData(self,type,val):
         pass
-'''
-class CounterModel(Model):
-    def __init__(self,listener,count):
-        super().__init__(listener)
-        self.count = count
-    
-    def changeData(self,type,arg): #数据改变的时候就调用这个函数，type表示数据改变的类型（字符串），arg是这次数据改变所需的参数
-        if type == 'add':
-            self.count += arg
-        self.listener.update('',self.count) #通知监听者
 
-class TimerModel(Model):
-    def __init__(self,listener):
-        super().__init__(listener)
-        self.time = 0
-     
-    def changeData(self,type,val): #能看懂上一个Model，看懂这个不难。
-        if type == 'inc':
-            self.time += val
-        elif type == 'zero':
-            self.time = 0
-        self.listener.update('', self.time)
-'''
 
 class GameModel(Model):
     SCREEN_HEIGHT = 480
@@ -42,7 +20,7 @@ class GameModel(Model):
         self.personModel = personModel
         self.axisModel = axisModel
 
-    def collsionDetection(self):
+    def collisionDetection(self):
         pm = self.personModel
         for function in self.axisModel.functionList:
             return len([point for point in function.points if
@@ -127,7 +105,7 @@ class PersonModel(Model):
     def maintain(self): #如果当前帧什么事件都没发生怎么办？
         self.listener.update('maintain', None) #view更新一下轮播贴图和人物坐标就行。
 
-'''
+
 class AxisModel(Model):
     EXPRESSION = "%s, %d<x<%d"
 
@@ -137,7 +115,7 @@ class AxisModel(Model):
 
     @staticmethod
     def getPosition():
-        return GlobalData.speed * GlobalData.t
+        return GlobalData.speed * GlobalData.time
 
     @staticmethod
     def rangeBias(origin, bias):
@@ -181,4 +159,3 @@ if __name__ == '__main__':
 
     unitTest = UnitTest()
     unitTest.axisTest()
-'''

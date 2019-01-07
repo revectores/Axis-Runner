@@ -44,3 +44,11 @@ class PersonView(View):
 
     def __init__(self,border = 0,mode = 0):
         self.border,self.mode = border,mode
+
+class AxisView(View):
+    def draw(self,arg):
+        pass
+    
+    def update(self,type,val):
+        for point in val:
+            pygame.draw.rect(GlobalData.screen,(100,100,100),(point.x,point.y,5,5))
