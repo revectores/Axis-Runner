@@ -1,6 +1,7 @@
 from math import *
 from random import *
 from time import time
+from Model import *
 
 class Function:
     SCREEN_WIDTH = 800
@@ -40,52 +41,57 @@ class Function:
         return min(self.points, key=lambda point: point.y).y
 
 
+class BasicFunction:
+    def __init__(self, formula, expression):
+        self.formula = formula
+        self.expression = expression
+
+    def __add__(self, other):
+        new_formula = lambda x: self.formula(x) + other.formula(x)
+        new_expression = "(%s) + (%s)" % (self.expression, other.expression)
+        return BasicFunction(new_formula, new_expression)
+
+    def __sub__(self, other):
+        new_formula = lambda x: self.formula(x) - other.formula(x)
+        new_expression = "(%s) - (%s)" % (self.expression, other.expression)
+        return BasicFunction(new_formula, new_expression)
+
+    def __mul__(self, other):
+        new_formula = lambda x: self.formula(other.formula(x))
+        new_expression = self.expression.replace('x', "(%s)" % other.expression)
+        return BasicFunction(new_formula, new_expression)
+
+
 class FuncModel:
+    FUNC_TYPE = 4
     eq = lambda x: x
 
     @staticmethod
-    def linear(para, f=eq):
+    def linear(para, f=eq, s='x'):
         k, b = para
-        return lambda x: k * f(x) + b
+        formula = lambda x: k * f(x) + b
+        expression = "%d*%s+%d" % (k, s, b)
+        return BasicFunction(formula, expression)
 
     @staticmethod
-    def exp(para, f=eq):
+    def exp(para, f=eq, s='x'):
         base = para[0]
-        return lambda x: base ** f(x)
+        formula = lambda x: base ** f(x)
+        expression = "%d**%s" % (base, s)
+        return BasicFunction(formula, expression)
 
     @staticmethod
-    def power(para, f=eq):
+    def power(para, f=eq, s='x'):
         exp = para[0]
-        return lambda x: f(x) ** exp
+        formula = lambda x: f(x) ** exp
+        expression = "%s**%d" % (s, exp)
+        return BasicFunction(formula, expression)
 
     @staticmethod
-    def sin(f=eq):
-        return lambda x: sin(f(x))
-
-    @staticmethod
-    def arcsin():
-        pass
-
-
-class FuncStrModel:
-    @staticmethod
-    def linear(para, str):
-        k, b = para
-        return "%d*%s+%d" % (k, str, b)
-
-    @staticmethod
-    def exp(para, str):
-        base = para[0]
-        return "%d**%s" % (base, str)
-
-    @staticmethod
-    def power(para, str):
-        exp = para[0]
-        return "%s**%d" % (str, exp)
-
-    @staticmethod
-    def sin(para, str):
-        return "sin(%s)" % (str)
+    def sin(para, f=eq, s='x'):
+        formula = lambda x: sin(f(x))
+        expression = "sin(%s)" % s
+        return BasicFunction(formula, expression)
 
     @staticmethod
     def arcsin():
@@ -110,22 +116,49 @@ class FuncRandom:
             definition = range(Function.SCREEN_WIDTH, Function.SCREEN_WIDTH + max_def)
 
         exp1 = FuncModel.exp([2])
-        exp2 = FuncStrModel.exp(2, 'x')
         formula = FuncModel.linear([k, b], exp1)
-        formula_string = FuncStrModel.linear([k, b], exp2)
         # direction = FuncRandom.direction()
         # y_0, y_w = formula(0), formula(GlobalData.WIDTH)
 
-        new_function = Function(formula, definition, formula_string, max_def, extend_v, mov_v)
-        return new_function
+        # new_function = Function(formula, definition, formula_string, max_def, extend_v, mov_v)
+        # return new_function
 
     @staticmethod
-    def simpleRandom():
-        r = random()
+    def randomUnit():
+        funcMap = [
+            lambda para: FuncModel.linear(para),
+            lambda para: FuncModel.exp(para),
+            lambda para: FuncModel.power(para),
+            lambda para: FuncModel.sin(para)
+        ]
+        paraMap = [
+            [randint(-100, 100), randint(-100, 100)],
+            [randint(-3, 3)],
+            [randint(1, 5)],
+            [randint(-1, 1)],
+        ]
+
+        r = randint(0, 3)
+        return funcMap[r](paraMap[r])
 
     @staticmethod
-    def random():
-        pass
+    def random(layer):
+        if layer == 1: return BasicFunction(lambda x: x, 'x')
+        composeMap = [
+            lambda f1, f2: f1 + f2,
+            lambda f1, f2: f1 - f2,
+            lambda f1, f2: f1 * f2
+        ]
+        r = randint(0, 2)
+        return composeMap[r](FuncRandom.randomUnit(), FuncRandom.random(layer-1))
+
+    @staticmethod
+    def adjust(fun):
+        player_x = Function.SCREEN_WIDTH//2
+        y_0 = fun.formula(player_x)
+        b = randint(PersonModel.attack_border['top'], PersonModel.attack_border['bottom'])
+        adjust_linear = FuncModel.linear([0, b-y_0], lambda x: x, 'x')
+        return fun + adjust_linear
 
 
 class Point:
@@ -141,9 +174,30 @@ class Point:
 
 
 class UnitTest:
-    def funcModelTest(self):
-        pass
+    def funcComposeTest(self):
+        funcModel = FuncModel()
+        linear1 = FuncModel.linear([1, 2])
+        linear2 = FuncModel.linear([2, 3])
+        print((linear1*linear2).formula(1))
+
+    def randomFunTest(self):
+        funcModel = FuncModel()
+        rand_fun = FuncRandom.random(3)
+        print(rand_fun.expression)
+        print(rand_fun.formula(1))
+
+    def funAdjustTest(self):
+        rand_fun = FuncRandom.random(3)
+        adjust_rand_fun = FuncRandom.adjust(rand_fun)
+
+        print(rand_fun.expression)
+        print(rand_fun.formula(Function.SCREEN_WIDTH//2))
+
+        print(adjust_rand_fun.expression)
+        print(adjust_rand_fun.formula(Function.SCREEN_WIDTH//2))
+
 
 if __name__ == '__main__':
     unitest = UnitTest()
-    unitest.funcModelTest()
+    # unitest.funcComposeTest()
+    unitest.funAdjustTest()
