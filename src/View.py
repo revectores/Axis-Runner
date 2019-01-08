@@ -33,7 +33,6 @@ class PersonView(View):
     SLOW_FACTOR = 2
 
     def draw(self,arg):
-        self.pos = (arg[0],arg[1])
         GlobalData.screen.blit(self.run[0],self.pos)
 
     def update(self,type,val):
@@ -68,7 +67,7 @@ class PersonView(View):
             elif self.mode == 'jump':
                 self.jumpTime = 0
 
-    def __init__(self,pos = (0,0),mode = 'walk'):
+    def __init__(self,pos = (282,148),mode = 'walk'):
         self.pos,self.mode = pos,mode
         self.jump = []
         self.run = []
