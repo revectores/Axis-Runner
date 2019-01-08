@@ -19,7 +19,7 @@ def main():
     GlobalData.init([GameStatus],{'main':0},0)
     #进入消息循环
     while 1:
-        clock.tick(60) #这个数字要<=60
+        clock.tick(GlobalData.f) #这个数字要<=60
         #得到当前状态，通知这个状态时间的流逝，然后处理事件
         GlobalData.update()
         status = GlobalData.getStatus()

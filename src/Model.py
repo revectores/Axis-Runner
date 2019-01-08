@@ -28,9 +28,9 @@ class GameModel(Model):
 
 
 class PersonModel(Model):
-    STAND_HEIGHT = 100  # 人物站立的高度
-    DOWN_HEIGHT = 50    # 人物下蹲的高度
-    WIDTH = 50          # 人物宽度
+    STAND_HEIGHT = 92  # 人物站立的高度
+    DOWN_HEIGHT = 60   # 人物下蹲的高度
+    WIDTH = 76          # 人物宽度
 
     STAND_TOP = GameModel.SCREEN_HEIGHT/2 - STAND_HEIGHT   # 正常站立的人物头部边界
     DOWN_TOP = GameModel.SCREEN_HEIGHT/2 - DOWN_HEIGHT     # 下蹲的人物头部边界
@@ -46,7 +46,7 @@ class PersonModel(Model):
         self.height = self.STAND_HEIGHT
         self.width = self.WIDTH
         self.v_x = 10
-        self.v_y = 35
+        self.v_y = 25
         self._mode = 'walk'
         self.jumpStart = 0
         self.max_border['top'] = self.STAND_HEIGHT + self.v_x ** 2 / GameModel.g

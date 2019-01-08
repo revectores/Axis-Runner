@@ -63,7 +63,6 @@ class GameStatus(Status):
         self.view.update('',0)
         self.personStatus.timeElapse()
         self.axisStatus.timeElapse()
-        print(self.axisStatus.view.update)
         pygame.display.update()
         if self.model.collisionDetection():
             GlobalData.changeStatus(GlobalData.StatusEnum.END_GAME)

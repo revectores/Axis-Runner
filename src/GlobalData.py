@@ -5,6 +5,7 @@ screen = None
 speed = 10
 time = 0
 statusDict = {}
+f = 60
 
 def getStatus(): #获得当前状态
     return statusList[currentStatus]
