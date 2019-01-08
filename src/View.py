@@ -15,17 +15,22 @@ class GameView(View):
     
     def draw(self,arg):
         GlobalData.screen.fill(self.bgColor)
-        GlobalData.screen.blit(self.font.render('得分：0',True,self.fontColor),self.pos)
+        pygame.draw.rect(GlobalData.screen,(70,70,70),(0,230,570,10))
+        pygame.draw.polygon(GlobalData.screen,(70,70,70),((525,200),(555,230),(568,230),(538,200)))
+        pygame.draw.polygon(GlobalData.screen,(70,70,70),((525,270),(555,240),(568,240),(538,270)))
         pygame.display.update()
-    
+
     def update(self,type,val):
         GlobalData.screen.fill(self.bgColor)
-        GlobalData.screen.blit(self.font.render('得分：%d' % (GlobalData.time),True,self.fontColor),self.pos)
+        pygame.draw.rect(GlobalData.screen,(70,70,70),(0,230,570,10))
+        pygame.draw.polygon(GlobalData.screen,(70,70,70),((525,200),(555,230),(568,230),(538,200)))
+        pygame.draw.polygon(GlobalData.screen,(70,70,70),((525,270),(555,240),(568,240),(538,270)))
+
 
 class PersonView(View):
     WALK = 4
     JUMP = 11
-    SLOW_FACTOR = 3
+    SLOW_FACTOR = 2
 
     def draw(self,arg):
         self.pos = (arg[0],arg[1])
@@ -36,22 +41,27 @@ class PersonView(View):
             self.pos = (val[0],val[1])
             if self.mode == 'walk':
                 GlobalData.screen.blit(self.run[self.walkTime // self.SLOW_FACTOR % self.WALK],self.pos)
+                GlobalData.screen.blit(pygame.font.Font(None,20).render('(%d,0)' % (GlobalData.time),True,(100,100,100)),(self.pos[0]+20,self.pos[1]+92))
                 self.walkTime += 1
             elif self.mode == 'jump':
-                GlobalData.f = 20
+                GlobalData.f = 12
                 GlobalData.screen.blit(self.jump[self.jumpTime % self.JUMP],self.pos)
+                GlobalData.screen.blit(pygame.font.Font(None,20).render('(%d,%d)' % (GlobalData.time,150-self.pos[1]),True,(100,100,100)),(self.pos[0]+20,self.pos[1]+92))
                 self.jumpTime += 1
             else:
                 GlobalData.screen.blit(self.down,self.pos)
+                GlobalData.screen.blit(pygame.font.Font(None,20).render('(%d,0)' % (GlobalData.time),True,(100,100,100)),(self.pos[0]+20,self.pos[1]+60))
         elif type == 'maintain':
             if self.mode == 'walk':
                 GlobalData.screen.blit(self.run[self.walkTime // self.SLOW_FACTOR  % self.WALK],self.pos)
+                GlobalData.screen.blit(pygame.font.Font(None,20).render('(%d,0)' % (GlobalData.time),True,(100,100,100)),(self.pos[0]+20,self.pos[1]+92))
                 self.walkTime += 1
             else:
                 GlobalData.screen.blit(self.down,self.pos)
-                GlobalData.f = 20
+                GlobalData.screen.blit(pygame.font.Font(None,20).render('(%d,0)' % (GlobalData.time),True,(100,100,100)),(self.pos[0]+20,self.pos[1]+60))
+                GlobalData.f = 12
         elif type == 'mode':
-            GlobalData.f = 60
+            GlobalData.f = 30
             self.mode = val
             if self.mode == 'walk':
                 self.walkTime = 0
