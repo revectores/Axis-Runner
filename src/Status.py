@@ -30,26 +30,21 @@ class Status: #Status表示一个游戏场景，本质就是MVC设计模式中�
 class PersonStatus(Status):
     def __init__(self,model,view):
         super().__init__(model,view)
-        self.hMove = 0
 
     def handle(self,event):
-        if not self.hMove:
+        if self.model.lr_mode == 'back' or  self.model.lr_mode == 'normal':
             if event.type == KEYDOWN:
                 if event.key == K_a:
-                    self.hMove = 1
                     self.model.lr_mode = 'left'
                 elif event.key == K_d:
-                    self.hMove = 2
                     self.model.lr_mode = 'right'
         else:
             if event.type == KEYUP:
                 if event.key == K_a:
-                    if self.hMove == 1:
-                        self.hMove = 0
+                    if self.lr_mode == 'left':
                         self.model.lr_mode = 'back'
                 elif event.key == K_d:
-                    if self.hMove == 2:
-                        self.hMove = 0
+                    if self.hMove == 'right':
                         self.model.lr_mode = 'back'
         if self.model.mode == 'jump': #跳跃过程中一切操作无用
             return
@@ -67,6 +62,10 @@ class PersonStatus(Status):
             self.model.jumpUpdate()
         else:
             self.model.maintain()
+        if self.model.lr_mode == 'back':
+            self.model.backUpdte()
+        elif self.model.lr_mode != 'normal':
+            self.model.lrUpdate()
 
     def init(self):
         self.view.draw([200,200,100,100])
