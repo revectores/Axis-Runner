@@ -11,14 +11,16 @@ class Model:
     def changeData(self,type,val):
         pass
 
-class StartModel(Model):
+
+class ButtonResponseModel(Model):
     def changeData(self,type,val):
         self.mode = type
-        self.listener.update(type)
+        self.listener.update(type,None)
     
-    def __init__(self,listener):
+    def __init__(self,listener,mode):
         super().__init__(listener)
-        self.mode = 'normal'
+        self.mode = mode
+
 
 class GameModel(Model):
     SCREEN_HEIGHT = 480
@@ -38,7 +40,6 @@ class GameModel(Model):
                  pm.left < point.x < pm.left + pm.width and pm.top < point.y < pm.top + pm.height])
             return len([point for point in function.points if
                  pm.left < point.x < pm.left + pm.width and pm.top < point.y < pm.top + pm.height])
-
 
 
 class PersonModel(Model):
@@ -165,7 +166,7 @@ class AxisModel(Model):
         super().__init__(listener)
         self.functionList = []
         self.lastNew = GlobalData.time
-        self.internalTime = 100
+        self.internalTime = 50
 
     @staticmethod
     def getPosition():

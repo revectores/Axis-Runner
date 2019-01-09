@@ -16,10 +16,10 @@ def main():
     clock = pygame.time.Clock() 
     GlobalData.clock = clock 
     #初始化status，然后进入初状态
-    GlobalData.init([GameStatus,StartStatus],{'main':0,'start':1},1)
+    GlobalData.init([GameStatus,StartStatus,GameOverStatus],{'main':0,'start':1,'gameover':2},1)
     #进入消息循环
     while 1:
-        clock.tick(GlobalData.f) #这个数字要<=60
+        clock.tick(GlobalData.f)
         #得到当前状态，通知这个状态时间的流逝，然后处理事件
         GlobalData.update()
         status = GlobalData.getStatus()

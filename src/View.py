@@ -15,17 +15,14 @@ class StartView(View):
             textsurface = font.render(text,True,(0,0,0))
             return textsurface
         self.bg = pygame.image.load('../res/bg.jpg')
-        self.titlefont = pygame.font.Font('../res/ar.ttf',115 *4//5)
-        self.subfont = pygame.font.Font('../res/ar.ttf',40*4//5)
+        self.titlefont = pygame.font.Font('../res/font/ar.ttf',115 *4//5)
+        self.subfont = pygame.font.Font('../res/font/ar.ttf',40*4//5)
         self.textsurf = text_objects('Axis Runner',self.titlefont)
         self.stt = text_objects('Start',self.subfont)
         self.ex = text_objects('Exit',self.subfont)
         self.op = text_objects('Option',self.subfont)
-        pygame.mixer.music.load('../res/bgm/bg1.mp3')
-        pygame.mixer.music.play(loops = 114514)
-        pygame.mixer.music.set_volume(0.2)
 
-    def draw(self,arg):
+    def draw0(self):
         grey = (139,139,139)
 
         GlobalData.screen.blit(self.bg,(0,0))
@@ -41,19 +38,26 @@ class StartView(View):
         pygame.draw.rect(GlobalData.screen, grey,(290*4//5,465*4//5,200*4//5,50*4//5))
         GlobalData.screen.blit(self.op, (330*4//5,465*4//5))
     
-    def update(self,arg):
+    def draw(self,arg):
+        self.draw0()
+        pygame.mixer.music.load('../res/bgm/bg1.mp3')
+        pygame.mixer.music.play(loops = 114514)
+        pygame.mixer.music.set_volume(0.2)
+
+    def update(self,type,val):
         bright_grey = (185,185,185)
-        self.draw(None)
-        if arg == 'start':
+        self.draw0()
+        if type == 'start':
             pygame.draw.rect(GlobalData.screen, bright_grey,(290*4//5,265*4//5,200*4//5,50*4//5))
             GlobalData.screen.blit(self.stt, (335*4//5,265*4//5))
-        elif arg == 'exit':
+        elif type == 'exit':
             pygame.draw.rect(GlobalData.screen, bright_grey,(290*4//5,365*4//5,200*4//5,50*4//5))
             GlobalData.screen.blit(self.ex, (353*4//5,365*4//5))
-        elif arg == 'option':
+        elif type == 'option':
             pygame.draw.rect(GlobalData.screen, bright_grey,(290*4//5,465*4//5,200*4//5,50*4//5))
             GlobalData.screen.blit(self.op, (330*4//5,465*4//5))
-        
+
+
 class GameView(View):
     def __init__(self,bgColor,font,fontColor,pos):
         self.bgColor,self.font,self.fontColor,self.pos = bgColor,font,fontColor,pos
@@ -74,6 +78,46 @@ class GameView(View):
         pygame.draw.rect(GlobalData.screen,(70,70,70),(0,230,570,10))
         pygame.draw.polygon(GlobalData.screen,(70,70,70),((525,200),(555,230),(568,230),(538,200)))
         pygame.draw.polygon(GlobalData.screen,(70,70,70),((525,270),(555,240),(568,240),(538,270)))
+
+
+class GameOverView(View):
+    def __init__(self):
+        def text_objects(text,font,color):
+            textsurface = font.render(text,True,color)
+            return textsurface
+        self.titlefont = pygame.font.Font("../res/font/go.ttf",115 * 4 // 5)
+        self.textsurf = text_objects("Game Over!",self.titlefont,(0,0,0))
+        self.subfont = pygame.font.Font("../res/font/ar.ttf",40* 4 // 5)
+        self.restart = text_objects("Restart",self.subfont,(0,0,0))
+        self.ret = text_objects("Back to Menu",self.subfont,(0,0,0))
+        self.bg = pygame.image.load('../res/bg.jpg')
+
+    def draw0(self):
+        GlobalData.screen.blit(self.bg,(0,0))
+        GlobalData.screen.blit(self.textsurf, (40* 4 // 5,150* 4 // 5))
+        
+        pygame.draw.rect(GlobalData.screen,(189,181,80),(100* 4 // 5,350* 4 // 5,200* 4 // 5,50* 4 // 5))
+        GlobalData.screen.blit(self.restart,(120* 4 // 5,350* 4 // 5))
+
+        pygame.draw.rect(GlobalData.screen,(189,181,80),(405* 4 // 5,350* 4 // 5,300* 4 // 5,50* 4 // 5))
+        GlobalData.screen.blit(self.ret,(420* 4 // 5,350* 4 // 5))
+
+        GlobalData.screen.blit(pygame.font.Font(None,30).render('x = %d' % (GlobalData.score),True,(0,0,0)),(270,230))
+
+    def draw(self,arg):
+        pygame.mixer.music.load('../res/bgm/bg3.mp3')
+        pygame.mixer.music.play(loops = 114514)
+        pygame.mixer.music.set_volume(0.2)
+        self.draw0()
+
+    def update(self,type,val):
+        self.draw0()
+        if type == 'res':
+            pygame.draw.rect(GlobalData.screen,(189,183,107),(100* 4 // 5,350* 4 // 5,200* 4 // 5,50* 4 // 5))
+            GlobalData.screen.blit(self.restart,(120* 4 // 5,350* 4 // 5))
+        elif type == 'ret':
+            pygame.draw.rect(GlobalData.screen,(189,183,107),(405* 4 // 5,350* 4 // 5,300* 4 // 5,50* 4 // 5))
+            GlobalData.screen.blit(self.ret,(420* 4 // 5,350* 4 // 5))
 
 
 class PersonView(View):
@@ -124,10 +168,10 @@ class PersonView(View):
         self.jump = []
         self.run = []
         for i in range(11):
-            self.jump.append(pygame.transform.scale(pygame.image.load('../res/jump/%d.jpg' % (i + 1)),(76,92)))
+            self.jump.append(pygame.transform.scale(pygame.image.load('../res/person/jump/%d.jpg' % (i + 1)),(76,92)))
         for i in range(4):
-            self.run.append(pygame.transform.scale(pygame.image.load('../res/run/%d.jpg' % (i + 1)),(76,92)))
-        self.down = pygame.transform.scale(pygame.image.load('../res/down.jpg'),(76,60))
+            self.run.append(pygame.transform.scale(pygame.image.load('../res/person/run/%d.jpg' % (i + 1)),(76,92)))
+        self.down = pygame.transform.scale(pygame.image.load('../res/person/down.jpg'),(76,60))
         self.walkTime = 1
         self.jumpTime = 0
         self.downTime = 0

@@ -58,7 +58,36 @@ class StartStatus(Status):
     @staticmethod
     def build():
         view = StartView()
-        return StartStatus(StartModel(view),view)
+        return StartStatus(ButtonResponseModel(view,'normal'),view)
+
+
+class GameOverStatus(Status):
+    def handle(self,event):
+        super().handle(event)
+        if event.type == MOUSEBUTTONDOWN:
+            if self.model.mode == 'res':
+                GlobalData.changeStatus(GlobalData.statusDict['main'])
+            elif self.model.mode == 'ret':
+                GlobalData.changeStatus(GlobalData.statusDict['start'])
+    
+    def init(self):
+        self.view.draw(None)
+        pygame.display.update()
+
+    def timeElapse(self):
+        mouse = pygame.mouse.get_pos()
+        if 100*4//5+200*4//5 > mouse[0] > 100*4//5 and 350*4//5 +50*4//5 >mouse[1] > 350*4//5:#改
+            self.model.changeData('res',None)
+        elif 405*4//5+300*4//5 > mouse[0] > 405*4//5 and 350*4//5 + 50*4//5 >mouse[1] >350*4//5:
+            self.model.changeData('ret',None)
+        else:
+            self.model.changeData('normal',None)
+        pygame.display.update() 
+    
+    @staticmethod
+    def build():
+        view = GameOverView()
+        return GameOverStatus(ButtonResponseModel(view,'normal'),view)
 
 
 class PersonStatus(Status):
@@ -119,7 +148,11 @@ class GameStatus(Status):
         self.axisStatus.timeElapse()
         pygame.display.update()
         if self.model.collisionDetection():
-            GlobalData.changeStatus(GlobalData.StatusEnum.END_GAME)
+            GlobalData.score = GlobalData.time
+            GlobalData.time = 0
+            GlobalData.f = 30
+            GlobalData.statusList[GlobalData.statusDict['main']] = GameStatus.build()
+            GlobalData.changeStatus(GlobalData.statusDict['gameover'])
     
     def init(self):
         self.view.draw((200,200))
@@ -134,6 +167,7 @@ class GameStatus(Status):
         pst = PersonStatus.build()
         ast = AxisStatus.build()
         return GameStatus(pst,ast,GameModel(None,pst.model,ast.model),GameView((196,191,169),pygame.font.SysFont('SimHei', 60),(0,0,0),(20,20)))
+
 
 class AxisStatus(Status):
     def timeElapse(self):
