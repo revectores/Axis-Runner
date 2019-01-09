@@ -51,7 +51,7 @@ class PersonModel(Model):
         self.height = self.STAND_HEIGHT
         self.width = self.WIDTH
         self.v_x = 10
-        self.v_y = 40
+        self.v_y = 30
         self._mode = 'walk'
         self.jumpStart = 0
         self.max_border['top'] = self.STAND_HEIGHT + self.v_x ** 2 / GameModel.g

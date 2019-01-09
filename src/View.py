@@ -13,16 +13,17 @@ class View:
 class GameView(View):
     def __init__(self,bgColor,font,fontColor,pos):
         self.bgColor,self.font,self.fontColor,self.pos = bgColor,font,fontColor,pos
+        self.bg = pygame.image.load('../res/bg.jpg')
     
     def draw(self,arg):
-        GlobalData.screen.fill(self.bgColor)
+        GlobalData.screen.blit(self.bg,(0,0))
         pygame.draw.rect(GlobalData.screen,(70,70,70),(0,230,570,10))
         pygame.draw.polygon(GlobalData.screen,(70,70,70),((525,200),(555,230),(568,230),(538,200)))
         pygame.draw.polygon(GlobalData.screen,(70,70,70),((525,270),(555,240),(568,240),(538,270)))
         pygame.display.update()
 
     def update(self,type,val):
-        GlobalData.screen.fill(self.bgColor)
+        GlobalData.screen.blit(self.bg,(0,0))
         pygame.draw.rect(GlobalData.screen,(70,70,70),(0,230,570,10))
         pygame.draw.polygon(GlobalData.screen,(70,70,70),((525,200),(555,230),(568,230),(538,200)))
         pygame.draw.polygon(GlobalData.screen,(70,70,70),((525,270),(555,240),(568,240),(538,270)))
@@ -48,7 +49,10 @@ class PersonView(View):
                 self.walkTime += 1
             elif self.mode == 'jump':
                 GlobalData.f = 12
-                GlobalData.screen.blit(self.jump[self.jumpTime % self.JUMP],self.pos)
+                if self.jumpTime < self.JUMP:
+                    GlobalData.screen.blit(self.jump[self.jumpTime],self.pos)
+                else:
+                    GlobalData.screen.blit(self.jump[self.JUMP - 1],self.pos)
                 GlobalData.screen.blit(pygame.font.Font(None,20).render('(%d,%d)' % (GlobalData.time,150-self.pos[1]),True,(100,100,100)),(self.pos[0]+20,self.pos[1]+92))
                 self.jumpTime += 1
             else:
@@ -64,13 +68,18 @@ class PersonView(View):
             else:
                 GlobalData.screen.blit(self.down,self.pos)
                 GlobalData.screen.blit(pygame.font.Font(None,20).render('(%d,0)' % (GlobalData.time),True,(100,100,100)),(self.pos[0]+20,self.pos[1]+60))
-                GlobalData.f = 12
+                if self.downTime < 8:
+                    GlobalData.f = 12
+                else:
+                    GlobalData.f =30
+                self.downTime += 1
         elif type == 'mode':
             GlobalData.f = 30
             self.mode = val
             if self.mode == 'down':
                 self.runSound.stop()
                 self.downSound.play()
+                self.downTime = 0
             elif self.mode == 'walk':
                 self.walkTime = 0
             elif self.mode == 'jump':
@@ -90,6 +99,7 @@ class PersonView(View):
         self.down = pygame.transform.scale(pygame.image.load('../res/down.jpg'),(76,60))
         self.walkTime = 1
         self.jumpTime = 0
+        self.downTime = 0
         self.downSound = pygame.mixer.Sound('../res/se/down.ogg')
         self.runSound = pygame.mixer.Sound('../res/se/run.ogg')
         self.upSound = pygame.mixer.Sound('../res/se/jump.ogg')
