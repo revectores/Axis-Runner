@@ -41,10 +41,10 @@ class PersonStatus(Status):
         else:
             if event.type == KEYUP:
                 if event.key == K_a:
-                    if self.lr_mode == 'left':
+                    if self.model.lr_mode == 'left':
                         self.model.lr_mode = 'back'
                 elif event.key == K_d:
-                    if self.hMove == 'right':
+                    if self.model.lr_mode == 'right':
                         self.model.lr_mode = 'back'
         if self.model.mode == 'jump': #跳跃过程中一切操作无用
             return
@@ -60,12 +60,11 @@ class PersonStatus(Status):
     def timeElapse(self):
         if self.model.mode == 'jump':
             self.model.jumpUpdate()
-        else:
-            self.model.maintain()
         if self.model.lr_mode == 'back':
-            self.model.backUpdte()
+            self.model.backUpdate()
         elif self.model.lr_mode != 'normal':
             self.model.lrUpdate()
+        self.model.borderUpdate()
 
     def init(self):
         self.view.draw([200,200,100,100])

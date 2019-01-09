@@ -51,7 +51,7 @@ class PersonModel(Model):
         self.left = self.LEFT
         self.height = self.STAND_HEIGHT
         self.width = self.WIDTH
-        self.v_x = 10
+        self.v_x = 15
         self.v_y = 35
         self._mode = 'walk'
         self._lr_mode = 'normal'
@@ -88,7 +88,6 @@ class PersonModel(Model):
             self.lrStart = 0
             self.height = self.STAND_HEIGHT
             self.top = self.STAND_TOP
-            self.left = self.LEFT
 
         if nextMode == 'down':
             self.jumpStart = 0
@@ -100,7 +99,7 @@ class PersonModel(Model):
             self.top = self.STAND_TOP
             self.jumpStart = GlobalData.time
 
-        self.borderUpdate()
+        #self.borderUpdate()
         self.modeUpdate() #通知view层换人物贴图。
         #关于轮播图片实现动画的问题这个让view自己管理一个图片列表和索引就好，因为每一帧都会有update请求送过去，每update一次view换图这样就可以。人物脚下的坐标也是同样方法实现。
 
@@ -135,24 +134,20 @@ class PersonModel(Model):
             self.mode = 'walk'
             return
         self.top = GameModel.SCREEN_HEIGHT/2 - self.height - h
-        self.borderUpdate()
+        #self.borderUpdate()
         #if GlobalData.time - self.jumpStart >= 2 * self.v_y/GameModel.g:
 
     def getLR(self):
         t = GlobalData.time - self.lrStart
-        return log(self.v_x*t)
+        return self.v_x*log((abs(self.left - self.LEFT) + 3))
 
     def lrUpdate(self):
         r = self.getLR()
         self.left = GameModel.SCREEN_WIDTH/2 - self.width/2 - (r if self.lr_mode == 'left' else -r)
-        self.borderUpdate()
+        #self.borderUpdate()
 
-    def backUpdate(self, direction):
+    def backUpdate(self):
         r = self.getLR()
-
-
-    def maintain(self): #如果当前帧什么事件都没发生怎么办？
-        self.listener.update('maintain', None) #view更新一下轮播贴图和人物坐标就行。
 
 
 class AxisModel(Model):
