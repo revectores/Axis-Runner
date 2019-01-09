@@ -26,6 +26,40 @@ class Status: #Status表示一个游戏场景，本质就是MVC设计模式中�
         self.model = model
         self.view = view
 
+class StartStatus(Status):
+    def handle(self,event):
+        super().handle(event)
+        if event.type == MOUSEBUTTONDOWN:
+            print(self.model.mode)
+            if self.model.mode == 'exit':
+                pygame.quit()
+                sys.exit()
+            elif self.model.mode == 'start':
+                GlobalData.changeStatus(GlobalData.statusDict['main'])
+            elif self.model.mode == 'option':
+                GlobalData.changeStatus(GlobalData.statusDict['option'])
+
+    def init(self):
+        self.view.draw(None)
+        pygame.display.update()
+    
+    def timeElapse(self):
+        mouse = pygame.mouse.get_pos()
+        if 290*4//5+200*4//5 > mouse[0] > 290*4//5 and 265*4//5 +50*4//5 >mouse[1] > 265*4//5:#改
+            self.model.changeData('start',None)
+        elif 290*4//5+200*4//5 > mouse[0] > 290*4//5 and 365*4//5 + 50*4//5 >mouse[1] >365*4//5:
+            self.model.changeData('exit',None)
+        elif 290*4//5+200*4//5 > mouse[0] > 290*4//5 and 465*4//5 + 50*4//5 >mouse[1] >465*4//5:
+            self.model.changeData('option',None)
+        else:
+            self.model.changeData('normal',None)
+        pygame.display.update()
+
+    @staticmethod
+    def build():
+        view = StartView()
+        return StartStatus(StartModel(view),view)
+
 
 class PersonStatus(Status):
     def __init__(self,model,view):

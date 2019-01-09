@@ -11,6 +11,14 @@ class Model:
     def changeData(self,type,val):
         pass
 
+class StartModel(Model):
+    def changeData(self,type,val):
+        self.mode = type
+        self.listener.update(type)
+    
+    def __init__(self,listener):
+        super().__init__(listener)
+        self.mode = 'normal'
 
 class GameModel(Model):
     SCREEN_HEIGHT = 480

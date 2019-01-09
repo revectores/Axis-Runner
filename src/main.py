@@ -11,12 +11,12 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode((640, 480))
     GlobalData.screen = screen
-    pygame.display.set_caption('Test')
+    pygame.display.set_caption('Axis Runner')
     #初始化时钟
     clock = pygame.time.Clock() 
     GlobalData.clock = clock 
     #初始化status，然后进入初状态
-    GlobalData.init([GameStatus],{'main':0},0)
+    GlobalData.init([GameStatus,StartStatus],{'main':0,'start':1},1)
     #进入消息循环
     while 1:
         clock.tick(GlobalData.f) #这个数字要<=60
