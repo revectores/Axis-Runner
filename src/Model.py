@@ -142,9 +142,9 @@ class PersonModel(Model):
         t = GlobalData.time - self.lrStart
         return log(self.v_x*t)
 
-    def lrUpdate(self, direction):
+    def lrUpdate(self):
         r = self.getLR()
-        self.left = GameModel.SCREEN_WIDTH/2 - self.width/2 - (r if direction == 'left' else -r)
+        self.left = GameModel.SCREEN_WIDTH/2 - self.width/2 - (r if self.lr_mode == 'left' else -r)
         self.borderUpdate()
 
     def backUpdate(self, direction):
