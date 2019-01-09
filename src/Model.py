@@ -1,6 +1,7 @@
 from Function import *
 import GlobalData
 from random import random, randint
+from math import log
 
 #Model表示一个游戏场景所需的局部数据，Model和View的关系是一种基于观察者模式的关系，View对Model进行监听，实时变化
 class Model:
@@ -51,9 +52,11 @@ class PersonModel(Model):
         self.height = self.STAND_HEIGHT
         self.width = self.WIDTH
         self.v_x = 10
-        self.v_y = 30
+        self.v_y = 35
         self._mode = 'walk'
+        self._lr_mode = 'normal'
         self.jumpStart = 0
+        self.lrStart = 0
         self.max_border['top'] = self.STAND_HEIGHT + self.v_x ** 2 / GameModel.g
         self.attack_border['top'] = int(self.max_border['top'] * 1.5)
         self.attack_border['bottom'] = -int(self.max_border['bottom'] * 0.5)
@@ -78,25 +81,49 @@ class PersonModel(Model):
 
     @mode.setter
     def mode(self, nextMode):
+        lastMode = self._mode
         self._mode = nextMode
-        if nextMode == 'jump':
+        if nextMode == 'walk':
+            self.jumpStart = 0
+            self.lrStart = 0
             self.height = self.STAND_HEIGHT
             self.top = self.STAND_TOP
-            self.jumpStart = GlobalData.time
+            self.left = self.LEFT
 
         if nextMode == 'down':
             self.jumpStart = 0
             self.height = self.DOWN_HEIGHT
             self.top = self.DOWN_TOP
 
-        if nextMode == 'walk':
-            self.jumpStart = 0
+        if nextMode == 'jump':
             self.height = self.STAND_HEIGHT
             self.top = self.STAND_TOP
+            self.jumpStart = GlobalData.time
 
         self.borderUpdate()
         self.modeUpdate() #通知view层换人物贴图。
         #关于轮播图片实现动画的问题这个让view自己管理一个图片列表和索引就好，因为每一帧都会有update请求送过去，每update一次view换图这样就可以。人物脚下的坐标也是同样方法实现。
+
+    @property
+    def lr_mode(self):
+        return self._lr_mode
+
+    @lr_mode.setter
+    def lr_mode(self, nextMode):
+        lastMode = self._lr_mode
+        self._lr_mode = nextMode
+        if nextMode == 'left':
+            self.lrStart = GlobalData.time
+
+        if nextMode == 'right':
+            self.lrStart = GlobalData.time
+
+        if nextMode == 'back':
+            if lastMode == 'left':
+                self.left = self.LEFT
+
+            if lastMode == 'right':
+                self.left = self.LEFT
 
     def getHeight(self):
         t = GlobalData.time - self.jumpStart
@@ -104,12 +131,25 @@ class PersonModel(Model):
 
     def jumpUpdate(self):
         h = self.getHeight()
-        if h<=0:
+        if h <= 0:
             self.mode = 'walk'
             return
-        self.top = GameModel.SCREEN_HEIGHT / 2 - self.height - h
+        self.top = GameModel.SCREEN_HEIGHT/2 - self.height - h
         self.borderUpdate()
         #if GlobalData.time - self.jumpStart >= 2 * self.v_y/GameModel.g:
+
+    def getLR(self):
+        t = GlobalData.time - self.lrStart
+        return log(self.v_x*t)
+
+    def lrUpdate(self, direction):
+        r = self.getLR()
+        self.left = GameModel.SCREEN_WIDTH/2 - self.width/2 - (r if direction == 'left' else -r)
+        self.borderUpdate()
+
+    def backUpdate(self, direction):
+        r = self.getLR()
+
 
     def maintain(self): #如果当前帧什么事件都没发生怎么办？
         self.listener.update('maintain', None) #view更新一下轮播贴图和人物坐标就行。
