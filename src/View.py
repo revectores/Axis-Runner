@@ -1,5 +1,6 @@
 import GlobalData
 import pygame
+import random
 
 class View:
     def draw(self, arg):  # 初始状态绘制
@@ -33,6 +34,9 @@ class PersonView(View):
     SLOW_FACTOR = 2
 
     def draw(self,arg):
+        pygame.mixer.music.load('../res/bgm/bg2.mp3')
+        pygame.mixer.music.play(loops = 114514)
+        pygame.mixer.music.set_volume(0.2)
         GlobalData.screen.blit(self.run[0],self.pos)
 
     def update(self,type,val):
@@ -55,6 +59,8 @@ class PersonView(View):
                 GlobalData.screen.blit(self.run[self.walkTime // self.SLOW_FACTOR  % self.WALK],self.pos)
                 GlobalData.screen.blit(pygame.font.Font(None,20).render('(%d,0)' % (GlobalData.time),True,(100,100,100)),(self.pos[0]+20,self.pos[1]+92))
                 self.walkTime += 1
+                if not GlobalData.time % 100: 
+                    self.runSound.play()
             else:
                 GlobalData.screen.blit(self.down,self.pos)
                 GlobalData.screen.blit(pygame.font.Font(None,20).render('(%d,0)' % (GlobalData.time),True,(100,100,100)),(self.pos[0]+20,self.pos[1]+60))
@@ -62,9 +68,15 @@ class PersonView(View):
         elif type == 'mode':
             GlobalData.f = 30
             self.mode = val
-            if self.mode == 'walk':
+            if self.mode == 'down':
+                self.runSound.stop()
+                self.downSound.play()
+            elif self.mode == 'walk':
                 self.walkTime = 0
             elif self.mode == 'jump':
+                self.runSound.stop()
+                self.downSound.stop()
+                self.upSound.play()
                 self.jumpTime = 0
 
     def __init__(self,pos = (282,148),mode = 'walk'):
@@ -78,6 +90,10 @@ class PersonView(View):
         self.down = pygame.transform.scale(pygame.image.load('../res/down.jpg'),(76,60))
         self.walkTime = 1
         self.jumpTime = 0
+        self.downSound = pygame.mixer.Sound('../res/se/down.ogg')
+        self.runSound = pygame.mixer.Sound('../res/se/run.ogg')
+        self.upSound = pygame.mixer.Sound('../res/se/jump.ogg')
+
 
 class AxisView(View):
     def draw(self,arg):
