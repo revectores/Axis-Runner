@@ -1,5 +1,6 @@
 from Function import *
 import GlobalData
+from random import random, randint
 
 #Model表示一个游戏场景所需的局部数据，Model和View的关系是一种基于观察者模式的关系，View对Model进行监听，实时变化
 class Model:
@@ -23,14 +24,18 @@ class GameModel(Model):
     def collisionDetection(self):
         pm = self.personModel
         for function in self.axisModel.functionList:
+            print(pm.left, pm.top)
+            print([(point.x, point.y) for point in function.points if
+                 pm.left < point.x < pm.left + pm.width and pm.top < point.y < pm.top + pm.height])
             return len([point for point in function.points if
-                 pm.left < point.x < pm.left + pm.width and pm.top - pm.height < point.y < pm.top])
+                 pm.left < point.x < pm.left + pm.width and pm.top < point.y < pm.top + pm.height])
+
 
 
 class PersonModel(Model):
     STAND_HEIGHT = 92  # 人物站立的高度
     DOWN_HEIGHT = 60   # 人物下蹲的高度
-    WIDTH = 76          # 人物宽度
+    WIDTH = 76         # 人物宽度
 
     STAND_TOP = GameModel.SCREEN_HEIGHT/2 - STAND_HEIGHT   # 正常站立的人物头部边界
     DOWN_TOP = GameModel.SCREEN_HEIGHT/2 - DOWN_HEIGHT     # 下蹲的人物头部边界
@@ -46,20 +51,20 @@ class PersonModel(Model):
         self.height = self.STAND_HEIGHT
         self.width = self.WIDTH
         self.v_x = 10
-        self.v_y = 25
+        self.v_y = 40
         self._mode = 'walk'
         self.jumpStart = 0
         self.max_border['top'] = self.STAND_HEIGHT + self.v_x ** 2 / GameModel.g
         self.attack_border['top'] = int(self.max_border['top'] * 1.5)
         self.attack_border['bottom'] = -int(self.max_border['bottom'] * 0.5)
 
-    @staticmethod
-    def real2screen_x(x):
-        pass
+#    @staticmethod
+#    def real2screen_x(x):
+#        pass
 
-    @staticmethod
-    def real2screen_y(y):
-        return GameModel.SCREEN_HEIGHT - y
+#    @staticmethod
+#    def real2screen_y(y):
+#        return GameModel.SCREEN_HEIGHT - y
 
     def borderUpdate(self):
         self.listener.update('border', [self.left, self.top, self.width, self.height])
@@ -102,9 +107,8 @@ class PersonModel(Model):
         if h<=0:
             self.mode = 'walk'
             return
-        self.top -= h
+        self.top = GameModel.SCREEN_HEIGHT / 2 - self.height - h
         self.borderUpdate()
-        self.top +=h
         #if GlobalData.time - self.jumpStart >= 2 * self.v_y/GameModel.g:
 
     def maintain(self): #如果当前帧什么事件都没发生怎么办？
@@ -117,6 +121,8 @@ class AxisModel(Model):
     def __init__(self, listener):
         super().__init__(listener)
         self.functionList = []
+        self.lastNew = GlobalData.time
+        self.internalTime = 100
 
     @staticmethod
     def getPosition():
@@ -124,7 +130,7 @@ class AxisModel(Model):
 
     @staticmethod
     def rangeBias(origin, bias):
-        return range(origin[0] + bias, origin[-1] + bias)
+        return range(origin[0] + bias, origin[-1] + bias + 1)
 
     @staticmethod
     def realExp(function):
@@ -134,13 +140,21 @@ class AxisModel(Model):
         return self.EXPRESSION % form, real_def[0], real_def[-1]
 
     def functionUpdate(self):
+        # if len(self.functionList) < DMAP[0]['function_num']:
+        if GlobalData.time > self.lastNew + self.internalTime:
+            print(len(self.functionList))
+            self.newFunction()
+            self.lastNew = GlobalData.time
+            print([(point.x, point.y) for point in self.functionList[0].points])
+
         for function in self.functionList:
-            if function.expired_time > time():
+            if GlobalData.time > function.expired_time:
                 self.functionList.remove(function)
+                print('!!!!!!')
                 continue
 
-            fun_expression = realExp(function)
-            function.definition = rangeBias(function.definition, funciton.extend_v)
+            fun_expression = function.getRealExp(self.getPosition())
+            function.definition = self.rangeBias(function.definition, function.extend_v)
             self.listener.update(fun_expression, function.points)
 
     def newLinear(self):
@@ -149,13 +163,28 @@ class AxisModel(Model):
         new_linear = FuncRandom.linear(kr, br)
         return new_linear
 
+    def newFunction(self):
+        basic_fun = FuncRandom.adjust(FuncRandom.random(3))
+        formula = basic_fun.formula
+        formula_string = basic_fun.expression
+        max_def = 200
+        if random() > 0.5:
+            extend_v = randint(5, 10)
+            definition = range(-max_def, 0)
+        else:
+            extend_v = randint(-10, -5)
+            definition = range(GameModel.SCREEN_WIDTH, GameModel.SCREEN_WIDTH + max_def)
+        newFun = Function(formula, definition, formula_string, max_def, extend_v, 0)
+        self.functionList.append(newFun)
+        return True
+
 
 class UnitTest:
     def axisTest(self):
         axisModel = AxisModel(1)
-        new_linear = axisModel.newLinear()
-        prn_obj(new_linear)
-        print([(point.x, point.y) for point in new_linear.points])
+        axisModel.newFunction()
+        prn_obj(axisModel.functionList[0])
+        print([(point.x, point.y) for point in axisModel.functionList[0].points])
 
 
 if __name__ == '__main__':
