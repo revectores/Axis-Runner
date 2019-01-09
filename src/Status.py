@@ -33,7 +33,7 @@ class PersonStatus(Status):
         self.hMove = 0
 
     def handle(self,event):
-        if not self.hMove:
+        if not self.moveFlag:
             if event.type == KEYDOWN:
                 if event.key == K_a:
                     self.hMove = 1
