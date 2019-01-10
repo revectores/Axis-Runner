@@ -89,7 +89,8 @@ class PersonModel(Model):
         self._mode = 'walk'
         self._lr_mode = 'normal'
         self.jumpStart = 0
-        self.lrStart = 0
+        self.backStart = 0
+        self.beforeBack = ''
         self.max_border['top'] = self.STAND_HEIGHT + self.v_x ** 2 / GameModel.g
         self.attack_border['top'] = int(self.max_border['top'] * 1.5)
         self.attack_border['bottom'] = -int(self.max_border['bottom'] * 0.5)
@@ -152,10 +153,12 @@ class PersonModel(Model):
 
         if nextMode == 'back':
             if lastMode == 'left':
-                self.left = self.LEFT
+                self.beforeBack = 'left'
+                self.backStart = GlobalData.time
 
             if lastMode == 'right':
-                self.left = self.LEFT
+                self.beforeBack = 'right'
+                self.backStart = GlobalData.time
 
     def getHeight(self):
         t = GlobalData.time - self.jumpStart
@@ -180,7 +183,16 @@ class PersonModel(Model):
         # self.borderUpdate()
 
     def backUpdate(self):
-        r = self.getLR()
+        v = self.v_x
+        if self.beforeBack == 'left':
+            self.left += v
+            if self.left > self.LEFT:
+                self.lr_mode = 'normal'
+
+        if self.beforeBack == 'right':
+            self.left -= v
+            if self.left < self.LEFT:
+                self.lr_mode = 'normal'
 
 
 class AxisModel(Model):
