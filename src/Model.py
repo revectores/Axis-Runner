@@ -226,6 +226,11 @@ class AxisModel(Model):
 
     def functionUpdate(self):
         # if len(self.functionList) < DMAP[0]['function_num']:
+        if GlobalData.time >= 500 and random() < 0.005:
+            for function in self.functionList:
+                function.extend_v = -function.extend_v
+                function.expired_time += (function.SCREEN_WIDTH + function.max_def)/abs(function.extend_v)
+
         if GlobalData.time > self.lastNew + self.internalTime:
             print(len(self.functionList))
             self.newFunction()
@@ -251,17 +256,20 @@ class AxisModel(Model):
     def newFunction(self):
         # power1 = FuncModel.linear([0.5, 0]) * FuncModel.power([2]) * FuncModel.linear([1, -320])
         linear1 = FuncRandom.adjust(FuncModel.linear([randint(-3, 3), randint(0, 1)]))
-        power2 = FuncRandom.adjust(FuncModel.linear([0.005, randint(-1000, -300)]) * FuncModel.power([2]))
+        power2 = FuncRandom.adjust(FuncModel.linear([0.0025, randint(-1000, -300)]) * FuncModel.power([2]))
         power3 = FuncRandom.adjust(FuncModel.linear([0.001, randint(-1000, 200)]) * FuncModel.power([2]))
+        power4 = FuncRandom.adjust(FuncModel.linear([0.0000015, 0]) * FuncModel.power([3]))
+
         sin1 = FuncRandom.adjust(FuncModel.linear([100, 100]) * FuncModel.sin([1]) * FuncModel.linear([0.01, randint(-100, 300)]))
         exp1 = FuncRandom.adjust(FuncModel.linear([1, 0]) * FuncModel.exp([1.01]) * FuncModel.linear([1, randint(200, 300)]))
-        L = [linear1, power2, power3, sin1, exp1]
+        #L = [linear1, power2, power3, power4, sin1, exp1]
+        L = [power2]
         print(exp1.expression)
         basic_fun = L[randint(0, len(L) - 1)]
         # basic_fun = FuncRandom.adjust(FuncRandom.random(3))
         formula = basic_fun.formula
         formula_string = basic_fun.expression
-        max_def = 200
+        max_def = randint(100,300)
         if random() > 0.5:
             extend_v = randint(5, 10)
             definition = range(-max_def, 0)

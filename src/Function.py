@@ -161,7 +161,7 @@ class FuncRandom:
         player_x = Function.SCREEN_WIDTH//2
         y_0 = fun.formula(player_x)
         #b = randint(PersonModel.attack_border['bottom'], PersonModel.attack_border['top'])
-        b = randint(80, 200)
+        b = randint(100, 350)
         adjust_linear = FuncModel.linear([0, b-y_0], lambda x: x, 'x')
         return fun + adjust_linear
 
