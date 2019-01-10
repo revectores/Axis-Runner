@@ -223,13 +223,15 @@ class AxisModel(Model):
         return new_linear
 
     def newFunction(self):
-        power1 = FuncModel.linear([0.5, 0]) * FuncModel.power([2]) * FuncModel.linear([1, -320])
+        # power1 = FuncModel.linear([0.5, 0]) * FuncModel.power([2]) * FuncModel.linear([1, -320])
+        linear1 = FuncModel.linear([randint(-3, 3), randint(-50, 100)])
         power2 = FuncModel.linear([0.005, randint(-1000, -300)]) * FuncModel.power([2])
         power3 = FuncModel.linear([0.001, randint(-1000, 200)]) * FuncModel.power([2])
         sin1 = FuncModel.linear([100, 100]) * FuncModel.sin([1]) * FuncModel.linear([0.01, randint(-100, 300)])
-        exp1 = FuncModel.linear([1,0]) * FuncModel.exp([2]) * FuncModel.linear([1,0])
-        print(sin1.expression)
-        basic_fun = sin1
+        exp1 = FuncModel.linear([1,0]) * FuncModel.exp([1.01]) * FuncModel.linear([1,randint(200,300)])
+        L = [linear1, power2, power3, sin1, exp1]
+        print(exp1.expression)
+        basic_fun = L[randint(0, len(L)-1)]
         # basic_fun = FuncRandom.adjust(FuncRandom.random(3))
         formula = basic_fun.formula
         formula_string = basic_fun.expression

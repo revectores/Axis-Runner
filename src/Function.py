@@ -79,7 +79,7 @@ class FuncModel:
     @staticmethod
     def exp(para, f=eq, s='x'):
         base = para[0]
-        formula = lambda x: int(base ** f(x))
+        formula = lambda x: base ** f(x)
         expression = "%f**%s" % (base, s)
         return BasicFunction(formula, expression)
 
@@ -87,7 +87,7 @@ class FuncModel:
     def power(para, f=eq, s='x'):
         exp = para[0]
         formula = lambda x: int(f(x) ** exp)
-        expression = "%s**%d" % (s, exp)
+        expression = "%s**%f" % (s, exp)
         return BasicFunction(formula, expression)
 
     @staticmethod
