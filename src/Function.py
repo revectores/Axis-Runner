@@ -72,15 +72,15 @@ class FuncModel:
     @staticmethod
     def linear(para, f=eq, s='x'):
         k, b = para
-        formula = lambda x: int(k * f(x) + b)
-        expression = "%d*%s+%d" % (k, s, b)
+        formula = lambda x: k * f(x) + b
+        expression = "%f*%s+%f" % (k, s, b)
         return BasicFunction(formula, expression)
 
     @staticmethod
     def exp(para, f=eq, s='x'):
         base = para[0]
         formula = lambda x: int(base ** f(x))
-        expression = "%d**%s" % (base, s)
+        expression = "%f**%s" % (base, s)
         return BasicFunction(formula, expression)
 
     @staticmethod
@@ -92,7 +92,7 @@ class FuncModel:
 
     @staticmethod
     def sin(para, f=eq, s='x'):
-        formula = lambda x: int(sin(f(x)))
+        formula = lambda x: sin(f(x))
         expression = "sin(%s)" % s
         return BasicFunction(formula, expression)
 
