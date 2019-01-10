@@ -31,6 +31,7 @@ class GameModel(Model):
         super().__init__(listener)
         self.personModel = personModel
         self.axisModel = axisModel
+        self.bTimeCnt = 0
 
     def collisionDetection(self):
         pm = self.personModel
@@ -38,6 +39,18 @@ class GameModel(Model):
             print(pm.left, pm.top)
             print([(point.x, point.y) for point in function.points if
                  pm.left < point.x < pm.left + pm.width and pm.top < point.y < pm.top + pm.height])
+            if len([point for point in function.points if
+                pm.left - 30 < point.x < pm.left + pm.width + 30 and pm.top - 50 < point.y < 30 + pm.top + pm.height]):
+                GlobalData.f = 12
+                if not self.bTimeCnt:
+                    self.bTimeCnt = 1
+                elif self.bTimeCnt == 6:
+                    GlobalData.f = 30
+                else:
+                    self.bTimeCnt += 1
+            else:
+                GlobalData.f = 30
+                self.bTimeCnt = 0
             return len([point for point in function.points if
                  pm.left < point.x < pm.left + pm.width and pm.top < point.y < pm.top + pm.height])
 
