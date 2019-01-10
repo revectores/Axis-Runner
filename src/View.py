@@ -43,9 +43,10 @@ class StartView(View):
         if GlobalData.fromOption:
             GlobalData.fromOption = 0
         else:
-            pygame.mixer.music.load('../res/bgm/bg1.mp3')
-            pygame.mixer.music.play(loops = 114514)
-            pygame.mixer.music.set_volume(0.2)
+            if GlobalData.sound == 'Sound:On':
+                pygame.mixer.music.load('../res/bgm/bg1.mp3')
+                pygame.mixer.music.play(loops = 114514)
+                pygame.mixer.music.set_volume(0.2)
 
     def update(self,type,val):
         bright_grey = (185,185,185)
@@ -67,9 +68,10 @@ class GameView(View):
         self.bg = pygame.image.load('../res/bg.jpg')
     
     def draw(self,arg):
-        pygame.mixer.music.load('../res/bgm/bg2.mp3')
-        pygame.mixer.music.play(loops = 114514)
-        pygame.mixer.music.set_volume(0.2)
+        if GlobalData.sound == 'Sound:On':
+            pygame.mixer.music.load('../res/bgm/bg2.mp3')
+            pygame.mixer.music.play(loops = 114514)
+            pygame.mixer.music.set_volume(0.2)
         GlobalData.screen.blit(self.bg,(0,0))
         pygame.draw.rect(GlobalData.screen,(70,70,70),(0,230,570,10))
         pygame.draw.polygon(GlobalData.screen,(70,70,70),((525,200),(555,230),(568,230),(538,200)))
@@ -108,9 +110,10 @@ class GameOverView(View):
         GlobalData.screen.blit(pygame.font.Font(None,30).render('x = %d' % (GlobalData.score),True,(0,0,0)),(270,230))
 
     def draw(self,arg):
-        pygame.mixer.music.load('../res/bgm/bg3.mp3')
-        pygame.mixer.music.play(loops = 114514)
-        pygame.mixer.music.set_volume(0.2)
+        if GlobalData.sound == 'Sound:On':
+            pygame.mixer.music.load('../res/bgm/bg3.mp3')
+            pygame.mixer.music.play(loops = 114514)
+            pygame.mixer.music.set_volume(0.2)
         self.draw0()
 
     def update(self,type,val):
@@ -176,7 +179,8 @@ class PersonView(View):
                 GlobalData.screen.blit(pygame.font.Font(None,20).render('(%d,0)' % (GlobalData.time),True,(100,100,100)),(self.pos[0]+20,self.pos[1]+92))
                 self.walkTime += 1
                 if not GlobalData.time % 100: 
-                    self.runSound.play()
+                    if GlobalData.sound == 'Sound:On':
+                        self.runSound.play()
             elif self.mode == 'jump':
                 GlobalData.f = 15
                 if self.jumpTime < self.JUMP:
@@ -193,14 +197,16 @@ class PersonView(View):
             self.mode = val
             if self.mode == 'down':
                 self.runSound.stop()
-                self.downSound.play()
+                if GlobalData.sound == 'Sound:On':
+                    self.downSound.play()
                 self.downTime = 0
             elif self.mode == 'walk':
                 self.walkTime = 0
             elif self.mode == 'jump':
                 self.runSound.stop()
                 self.downSound.stop()
-                self.upSound.play()
+                if GlobalData.sound == 'Sound:On':
+                    self.upSound.play()
                 self.jumpTime = 0
 
     def __init__(self,pos = (282,148),mode = 'walk'):

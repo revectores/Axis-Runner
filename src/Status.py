@@ -115,6 +115,10 @@ class OptionStatus(Status):
                     self.model.flag = 1
                     self.model.sNum = (self.model.sNum + 1) % 2
                     GlobalData.sound = self.model.sound[self.model.sNum]
+                    if GlobalData.sound == 'Sound:Off':
+                        pygame.mixer.music.pause()
+                    else:
+                        pygame.mixer.music.play()
                 elif self.model.mode == 'level':
                     self.model.flag = 1
                     self.model.lNum = (self.model.lNum + 1) % 3
