@@ -6,6 +6,9 @@ speed = 10
 time = 0
 statusDict = {}
 f = 30
+level = 'Level:Quadratic'
+sound = 'Sound:On'
+fromOption = 0
 
 def getStatus(): #获得当前状态
     return statusList[currentStatus]

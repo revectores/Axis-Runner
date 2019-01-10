@@ -40,9 +40,12 @@ class StartView(View):
     
     def draw(self,arg):
         self.draw0()
-        pygame.mixer.music.load('../res/bgm/bg1.mp3')
-        pygame.mixer.music.play(loops = 114514)
-        pygame.mixer.music.set_volume(0.2)
+        if GlobalData.fromOption:
+            GlobalData.fromOption = 0
+        else:
+            pygame.mixer.music.load('../res/bgm/bg1.mp3')
+            pygame.mixer.music.play(loops = 114514)
+            pygame.mixer.music.set_volume(0.2)
 
     def update(self,type,val):
         bright_grey = (185,185,185)
@@ -118,6 +121,43 @@ class GameOverView(View):
         elif type == 'ret':
             pygame.draw.rect(GlobalData.screen,(189,183,107),(405* 4 // 5,350* 4 // 5,300* 4 // 5,50* 4 // 5))
             GlobalData.screen.blit(self.ret,(420* 4 // 5,350* 4 // 5))
+
+
+class OptionView(View):
+    def __init__(self):
+        def text_objects(text, font, color):
+            textsurface = font.render(text, True, color)
+            return textsurface
+        self.titlefont = pygame.font.Font('../res/font/ar.ttf', 115* 4 // 5 )
+        self.subfont = pygame.font.Font('../res/font/ar.ttf', 40* 4 // 5 )
+        self.subfont2 = pygame.font.Font('../res/font/ar.ttf', 30* 4 // 5 )
+        self.textsurf = text_objects('Option',self.titlefont,(0,0,0))
+        self.bg = self.bg = pygame.image.load('../res/bg.jpg')
+
+    def draw(self,arg):
+        GlobalData.screen.blit(self.bg,(0,0))
+        GlobalData.screen.blit(self.textsurf,(200* 4 // 5 ,90* 4 // 5 ))
+
+        pygame.draw.rect(GlobalData.screen,(189,181,80),(290* 4 // 5 ,265* 4 // 5 ,220* 4 // 5 ,50* 4 // 5 ))
+        GlobalData.screen.blit(self.subfont.render(GlobalData.sound,True,(0,0,0)),(310* 4 // 5 ,265* 4 // 5 ))
+
+        pygame.draw.rect(GlobalData.screen,(189,181,80),(290* 4 // 5 ,365* 4 // 5 ,220* 4 // 5 ,50* 4 // 5 ))
+        GlobalData.screen.blit(self.subfont2.render(GlobalData.level,True,(0,0,0)),(298* 4 // 5 ,365* 4 // 5 ))
+
+        pygame.draw.rect(GlobalData.screen,(189,181,80),(290* 4 // 5 ,465* 4 // 5 ,220* 4 // 5 ,50* 4 // 5 ))
+        GlobalData.screen.blit(self.subfont.render('Return',True,(0,0,0)),(330* 4 // 5 ,465* 4 // 5 ))
+
+    def update(self,type,val):
+        self.draw(None)
+        if type == 'sound':
+            pygame.draw.rect(GlobalData.screen,(189,183,107),(290* 4 // 5 ,265* 4 // 5 ,220* 4 // 5 ,50* 4 // 5 ))
+            GlobalData.screen.blit(self.subfont.render(GlobalData.sound,True,(0,0,0)),(310* 4 // 5 ,265* 4 // 5 ))
+        elif type == 'level':
+            pygame.draw.rect(GlobalData.screen,(189,183,107),(290* 4 // 5 ,365* 4 // 5 ,220* 4 // 5 ,50* 4 // 5 ))
+            GlobalData.screen.blit(self.subfont2.render(GlobalData.level,True,(0,0,0)),(298* 4 // 5 ,365* 4 // 5 ))
+        elif type == 'ret':
+            pygame.draw.rect(GlobalData.screen,(189,183,107),(290* 4 // 5 ,465* 4 // 5 ,220* 4 // 5 ,50* 4 // 5 ))
+            GlobalData.screen.blit(self.subfont.render('Return',True,(0,0,0)),(330* 4 // 5 ,465* 4 // 5 ))
 
 
 class PersonView(View):

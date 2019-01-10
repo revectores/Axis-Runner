@@ -42,6 +42,16 @@ class GameModel(Model):
                  pm.left < point.x < pm.left + pm.width and pm.top < point.y < pm.top + pm.height])
 
 
+class OptionModel(ButtonResponseModel):
+    def __init__(self,listener,val):
+        super().__init__(listener,val)
+        self.sound = ['Sound:On','Sound:Off']
+        self.level = ['Level:Linear','Level:Quadratic','Level:Cubic']
+        self.sNum = 0
+        self.lNum = 1
+        self.flag = 0
+
+
 class PersonModel(Model):
     STAND_HEIGHT = 92  # 人物站立的高度
     DOWN_HEIGHT = 60   # 人物下蹲的高度
@@ -166,7 +176,12 @@ class AxisModel(Model):
         super().__init__(listener)
         self.functionList = []
         self.lastNew = GlobalData.time
-        self.internalTime = 50
+        if GlobalData.level == 'Level:Linear':
+            self.internalTime = 150
+        elif GlobalData.level == 'Level:Quadratic':
+            self.internalTime = 100
+        else:
+            self.internalTime = 50
 
     @staticmethod
     def getPosition():

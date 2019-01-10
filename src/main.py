@@ -16,7 +16,7 @@ def main():
     clock = pygame.time.Clock() 
     GlobalData.clock = clock 
     #初始化status，然后进入初状态
-    GlobalData.init([GameStatus,StartStatus,GameOverStatus],{'main':0,'start':1,'gameover':2},1)
+    GlobalData.init([GameStatus,StartStatus,GameOverStatus,OptionStatus],{'main':0,'start':1,'gameover':2,'option':3},1)
     #进入消息循环
     while 1:
         clock.tick(GlobalData.f)

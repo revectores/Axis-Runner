@@ -90,6 +90,49 @@ class GameOverStatus(Status):
         return GameOverStatus(ButtonResponseModel(view,'normal'),view)
 
 
+class OptionStatus(Status):
+    def init(self):
+        self.view.draw(None)
+        pygame.display.update()
+    
+    def timeElapse(self):
+        mouse = pygame.mouse.get_pos()
+        if 510 * 4 // 5 > mouse[0] > 290 * 4 // 5 and 315 * 4 // 5 > mouse[1] > 265* 4 // 5 :
+            self.model.changeData('sound',None)
+        elif 510 * 4 // 5 > mouse[0] > 290 * 4 // 5 and 415 * 4 // 5 > mouse[1] > 365* 4 // 5 :
+            self.model.changeData('level',None)
+        elif 510* 4 // 5  > mouse[0] > 290* 4 // 5  and 515* 4 // 5  > mouse[1] > 465* 4 // 5 :
+            self.model.changeData('ret',None) 
+        else:
+            self.model.changeData('normal',None)
+        pygame.display.update()
+
+    def handle(self,event):
+        super().handle(event)
+        if event.type == MOUSEBUTTONDOWN:
+            if not self.model.flag:
+                if self.model.mode == 'sound':
+                    self.model.flag = 1
+                    self.model.sNum = (self.model.sNum + 1) % 2
+                    GlobalData.sound = self.model.sound[self.model.sNum]
+                elif self.model.mode == 'level':
+                    self.model.flag = 1
+                    self.model.lNum = (self.model.lNum + 1) % 3
+                    GlobalData.level = self.model.level[self.model.lNum]
+                    GlobalData.statusList[GlobalData.statusDict['main']] = GameStatus.build()
+                elif self.model.mode == 'ret':
+                    GlobalData.fromOption = 1
+                    GlobalData.changeStatus(GlobalData.statusDict['start'])
+        elif event.type == MOUSEBUTTONUP:
+            if self.model.flag:
+                self.model.flag = 0
+        
+    @staticmethod
+    def build():
+        view = OptionView()
+        return OptionStatus(OptionModel(view,'normal'),view)
+
+
 class PersonStatus(Status):
     def __init__(self,model,view):
         super().__init__(model,view)
